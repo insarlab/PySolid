@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+#######################################################################
+# A Python wrapper for solid Earth tides calculation using solid.for.
+#   Fortran code is originally written by Dennis Milbert, 2018-06-01.
+#   Available at: http://geodesyworld.github.io/SOFTS/solid.htm.
+# Author: Zhang Yunjun, Simran Sangha, Sep 2020
+# Copyright 2020, by the California Institute of Technology.
+#######################################################################
+# Recommend usage:
+#   import pysolid
+#   pysolid.calc_solid_earth_tides_grid()
+
+
+import os
+import numpy as np
+import datetime as dt
+from skimage.transform import resize
+
+try:
+    from . import solid
+except ImportError:
+    msg = "Cannot import name 'solid' from 'pysolid'!"
+    msg += '\n    Maybe solid.for is NOT compiled yet.'
+    msg += '\n    Check instruction at: https://github.com/insarlab/PySolid.'
+    raise ImportError(msg)
+
+
+##################################  Earth tides - grid mode  ###################################
+def calc_solid_earth_tides_grid(date_str, atr, step_size=1e3, display=False, verbose=True):
+    """Calculate solid Earth tides (SET) in east/north/up direction
+    for a spatial grid at a given date/time
+
+    Parameters: date_str  - str, date in YYYYMMDD format
+                atr       - dict, metadata including the following keys:
+                                LENGTH/WIDTTH
+                                X/Y_FIRST
+                                X/Y_STEP
+                                CENTER_LINE_UTC
+                step_size - float, grid step feeded into the fortran code in meters
+                                to speedup the calculation
+                display   - bool, plot the calculated SET
+                verbose   - bool, print verbose message
+    Returns:    tide_e    - 2D np.ndarray, SET in east  direction in meters
+                tide_n    - 2D np.ndarray, SET in north direction in meters
+                tide_u    - 2D np.ndarray, SET in up    direction in meters
+    Examples:   atr = readfile.read_attribute('geo_velocity.h5')
+                tide_e, tide_n, tide_u = calc_solid_earth_tides_grid('20180219', atr)
+    """
+
+    # time and location
+    utc_sec = float(atr['CENTER_LINE_UTC'])
+    t = dt.datetime.strptime(date_str, '%Y%m%d') + dt.timedelta(seconds=utc_sec)
+
+    lat0 = float(atr['Y_FIRST'])
+    lon0 = float(atr['X_FIRST'])
+    lat1 = lat0 + float(atr['Y_STEP']) * int(atr['LENGTH'])
+    lon1 = lon0 + float(atr['X_STEP']) * int(atr['WIDTH'])
+
+    if verbose:
+        print('PYSOLID: ----------------------------------------')
+        print('PYSOLID: datetime: {}'.format(t.isoformat()))
+        print('PYSOLID: SNWE: {}'.format((lat1, lat0, lon0, lon1)))
+
+    # step size
+    num_step = int(step_size / 108e3 / abs(float(atr['Y_STEP'])))
+    num_step = max(1, num_step)
+    length = np.rint(int(atr['LENGTH']) / num_step - 1e-4).astype(int)
+    width  = np.rint(int(atr['WIDTH'])  / num_step - 1e-4).astype(int)
+    lat_step = float(atr['Y_STEP']) * num_step
+    lon_step = float(atr['X_STEP']) * num_step
+    if verbose:
+        print('SOLID  : calculate solid Earth tides in east/north/up direction')
+        print('SOLID  : shape: {s}, step size: {la:.4f} by {lo:.4f} deg'.format(s=(length, width),
+                                                                                la=lat_step,
+                                                                                lo=lon_step))
+
+    ## calc solid Earth tides and write to text file
+    txt_file = os.path.abspath('solid.txt')
+    if os.path.isfile(txt_file):
+        os.remove(txt_file)
+
+    if verbose:
+        print('SOLID  : calculating / writing data to txt file: {}'.format(txt_file))
+
+    # Run twice to circumvent fortran bug which cuts off last file in loop - Simran, Jun 2020
+    for i in range(2):
+        solid.solid_grid(t.year, t.month, t.day, t.hour, t.minute, t.second,
+                         lat0, lat_step, length-1,
+                         lon0, lon_step, width-1)
+
+    ## read data from text file
+    if verbose:
+        print('PYSOLID: read data from text file: {}'.format(txt_file))
+    fc = np.loadtxt(txt_file,
+                    dtype=float,
+                    usecols=(2,3,4),
+                    delimiter=',',
+                    skiprows=0,
+                    max_rows=length*width)
+    tide_e = fc[:, 0].reshape(length, width)
+    tide_n = fc[:, 1].reshape(length, width)
+    tide_u = fc[:, 2].reshape(length, width)
+
+    # remove the temporary text file
+    os.remove(txt_file)
+
+    # resample to the input size
+    if num_step > 1:
+        out_shape = (int(atr['LENGTH']), int(atr['WIDTH']))
+        if verbose:
+            print('PYSOLID: resize data to the shape of {} using order-1 spline interpolation'.format(out_shape))
+        kwargs = dict(order=1, mode='edge', anti_aliasing=True, preserve_range=True)
+        tide_e = resize(tide_e, out_shape, **kwargs)
+        tide_n = resize(tide_n, out_shape, **kwargs)
+        tide_u = resize(tide_u, out_shape, **kwargs)
+
+    # plot
+    if display:
+        plot_solid_earth_tides_grid(tide_e, tide_n, tide_u, date_str, atr)
+
+    return tide_e, tide_n, tide_u
+
+
+#########################################  Plot  ###############################################
+def plot_solid_earth_tides_grid(tide_e, tide_n, tide_u, date_str=None, atr=None):
+    """Plot the solid Earth tides in ENU direction"""
+    from matplotlib import pyplot as plt, ticker
+
+    # plot
+    fig, axs = plt.subplots(nrows=1, ncols=3, figsize=[10, 4], sharex=True, sharey=True)
+    for ax, data, label in zip(axs.flatten(), 
+                               [tide_e, tide_n, tide_u],
+                               ['East', 'North', 'Up']):
+        im = ax.imshow(data*100, cmap='RdBu')
+        ax.tick_params(which='both', direction='in', bottom=True, top=True, left=True, right=True)
+        fig.colorbar(im, ax=ax, orientation='horizontal', label=label+' [cm]', pad=0.1, ticks=ticker.MaxNLocator(3))
+    fig.tight_layout()
+
+    # super title
+    if (date_str is not None) and (atr is not None):
+        t = dt.datetime.strptime(date_str, '%Y%m%d') + dt.timedelta(seconds=float(atr['CENTER_LINE_UTC']))
+        axs[1].set_title('solid Earth tides at {}'.format(t.isoformat()), fontsize=12)
+
+    plt.show()
+    return
+
