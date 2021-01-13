@@ -1,15 +1,38 @@
-      program solid
+      subroutine solid_grid(iyr,imo,idy,ihh,imm,iss,
+     * glad0,steplat,nlat,
+     * glod0,steplon,nlon)
 
-*** driver to test solid earth tide
-*** UTC version
+*** calculate solid earth tides (SET) for one spatial grid given the date/time
+*** Arguments: iyr/imo/idy/ihh/imm/iss - int, date/time for YYYY/MM/DD/HH/MM/SS
+***            glad0/glad1/steplat     - float, north(Y_FIRST)/south/step(negative) in deg
+***            glod0/glod1/steplon     - float, west(X_FIRST) /east /step(positive) in deg
+*** Returns:   latitude,  longitude,  SET_east,  SET_north,  SET_up
+***
+*** Written by Dennis Milbert in 2018-06-01. The code is available at:
+***     http://geodesyworld.github.io/SOFTS/solid.htm and can be downloaded as:
+***     wget http://geodesyworld.github.io/SOFTS/solid.for.txt -O solid.for
+***     The solid.for program is based on dehanttideinel.f provided by V. Dehant, 
+***     S. Mathews, J. Gipson and C. Bruyninx. The latest version of dehanttideinel.f 
+***     and its dependent subroutines can be download from IERS conventions website as:
+***     wget -r -l1 --no-parent -R "index.html*" -nH --cut-dirs=3 https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel
+*** Modified by Zhang Yunjun and Simran Sangha for a grid at given date/time, Sep 2020.
 
       implicit double precision(a-h,o-z)
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
-      logical lflag                    !*** leap second table limit flag
+      integer iyr,imo,idy,ihh,imm,iss
+      integer nlat,nlon
+      double precision glad0,steplat
+      double precision glod0,steplon
+      !***^ leap second table limit flag
+      logical lflag
       common/stuff/rad,pi,pi2
       common/comgrs/a,e2
 
-      write(*,*) 'program solid -- UTC version -- 2018jun01'
+*** open output file
+
+      lout=1
+      open(lout,file='solid.txt',form='formatted',status='unknown')
+      write(lout,'(a)') '# program solid -- UTC version -- 2018jun01'
 
 *** constants
 
@@ -22,30 +45,208 @@
       a=6378137.d0
       e2=6.69438002290341574957d-03
 
+*** input section
+
+      if(iyr.lt.1901.or.iyr.gt.2099) then
+        write(lout,'(a,i5)') 'ERROR: year NOT in [1901-2099]:',iyr
+        go to 98
+      endif
+
+      if(imo.lt.1.or.imo.gt.12) then
+        write(lout,'(a,i3)') 'ERROR: month NOT in [1-12]:',imo
+        go to 98
+      endif
+
+      if(idy.lt.1.or.idy.gt.31) then
+        write(lout,'(a,i3)') 'ERROR: day NOT in [1-31]:',idy
+        go to 98
+      endif
+
+      if(ihh.lt.1.or.ihh.gt.24) then
+        write(lout,'(a,i3)') 'ERROR: hour NOT in [1-12]:',ihh
+        go to 98
+      endif
+
+      if(imm.lt.1.or.imm.gt.60) then
+        write(lout,'(a,i3)') 'ERROR: minute NOT in [1-60]:',imm
+        go to 98
+      endif
+
+      if(iss.lt.1.or.iss.gt.60) then
+        write(lout,'(a,i3)') 'ERROR: second NOT in [1-60]:',iss
+        go to 98
+      endif
+
+      if(glad0.lt.-90.d0.or.glad0.gt.90.d0) then
+        write(lout,'(a,G0.9)') 'ERROR: lat0 NOT in [-90,+90]:',glad0
+        go to 98
+      endif
+
+      if(glod0.lt.-360.d0.or.glod0.gt.360.d0) then
+        write(lout,'(a,G0.9)') 'ERROR: lon0 NOT in [-360,+360]',glod0
+        go to 98
+      endif
+
+*** output header
+
+      glad1=glad0+nlat*steplat
+      glod1=glod0+nlon*steplon
+
+      write(lout,'(a,i5,2i3)') '# year, month, day =',iyr,imo,idy
+      write(lout,'(a,3i3)') '# hour, minute, second =',ihh,imm,iss
+      write(lout,'(a,4f15.9)') '# S, N, W, E =',glad1,glad0,glod0,glod1
+      write(lout,'(a,f15.9,i6)') '# step_lat, num_lat =',steplat,nlat
+      write(lout,'(a,f15.9,i6)') '# step_lon, num_lon =',steplon,nlon
+
+*** loop over the grid
+
+      do ilat=0,nlat
+        do ilon=0,nlon
+
+        glad=glad0+ilat*steplat
+        glod=glod0+ilon*steplon
+
+*** position of observing point (positive East)
+
+        if(glod.lt.  0.d0) glod=glod+360.d0
+        if(glod.ge.360.d0) glod=glod-360.d0
+
+        gla0=glad/rad
+        glo0=glod/rad
+        eht0=0.d0
+        call geoxyz(gla0,glo0,eht0,x0,y0,z0)
+        xsta(1)=x0
+        xsta(2)=y0
+        xsta(3)=z0
+
+
+*** here comes the sun  (and the moon)  (go, tide!)
+
+        !***^ UTC time system
+        ihr=   ihh
+        imn=   imm
+        sec=   iss
+        call civmjd(iyr,imo,idy,ihr,imn,sec,mjd,fmjd)
+        !***^ normalize civil time
+        call mjdciv(mjd,fmjd,iyr,imo,idy,ihr,imn,sec)
+        call setjd0(iyr,imo,idy)
+
+        !***^ false means flag not raised
+        !***^ mjd/fmjd in UTC
+        !***^ mjd/fmjd in UTC
+        !***^ mjd/fmjd in UTC
+        lflag=.false.
+        call sunxyz (mjd,fmjd,rsun,lflag)
+        call moonxyz(mjd,fmjd,rmoon,lflag)
+        call detide (xsta,mjd,fmjd,rsun,rmoon,etide,lflag)
+        xt = etide(1)
+        yt = etide(2)
+        zt = etide(3)
+
+*** determine local geodetic horizon components (topocentric)
+
+        !***^ tide vector
+        call rge(gla0,glo0,ut,vt,wt,xt,   yt,   zt)
+
+        call mjdciv(mjd,fmjd               +0.001d0/86400.d0,
+     *              iyr,imo,idy,ihr,imn,sec-0.001d0)
+
+        !*** write output to file
+        write(lout,'(*(G0.9,:,",  "))') glad,glod,vt,ut,wt
+
+        enddo
+      enddo
+
+*** end of processing and flag for leap second
+
+      if(lflag) then
+        write(*,'(a)') 'Mild Warning -- time crossed leap second table'
+        write(*,'(a)') '  boundaries.  Boundary edge value used instead'
+      endif
+
+      go to 99
+   98 write(*,'(a)') 'Check arguments.'
+
+      return
+   99 end
+
+*-----------------------------------------------------------------------
+      subroutine solid_point(glad,glod,iyr,imo,idy,step_sec)
+
+*** calculate solid earth tides at given location for one day in 1-min resolution
+*** Arguments: glad/glod   - float, latitude/longitude in deg
+***            iyr/imo/idy - int, start date/time in UTC
+***            step_sec    - int, time step in seconds
+*** Returns:   seconds,  SET_east,  SET_north,  SET_up
+***
+*** Written by Dennis Milbert in 2018-06-01. The code is available at:
+***     http://geodesyworld.github.io/SOFTS/solid.htm and can be downloaded as:
+***     wget http://geodesyworld.github.io/SOFTS/solid.for.txt -O solid.for
+***     The solid.for program is based on dehanttideinel.f provided by V. Dehant, 
+***     S. Mathews, J. Gipson and C. Bruyninx. The latest version of dehanttideinel.f 
+***     and its dependent subroutines can be download from IERS conventions website as:
+***     wget -r -l1 --no-parent -R "index.html*" -nH --cut-dirs=3 https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel
+*** Modified by Zhang Yunjun from program into subroutine with the step_sec argument, Jan 2021.
+
+      implicit double precision(a-h,o-z)
+      dimension rsun(3),rmoon(3),etide(3),xsta(3)
+      double precision glad,glod
+      integer iyr,imo,idy
+      integer nloop, step_sec
+      double precision tdel2
+      !*** leap second table limit flag
+      logical lflag
+      common/stuff/rad,pi,pi2
+      common/comgrs/a,e2
+
+*** open output file
+
       lout=1
       open(lout,file='solid.txt',form='formatted',status='unknown')
+      write(lout,'(a)') '# program solid -- UTC version -- 2018jun01'
 
-*** query section
+*** constants
 
-    1 write(*,'(a$)') 'Enter year    [1901-2099]: '
-      read(*,*) iyr
-      if(iyr.lt.1901.or.iyr.gt.2099) go to 1
+      pi=4.d0*datan(1.d0)
+      pi2=pi+pi
+      rad=180.d0/pi
 
-    2 write(*,'(a$)') 'Enter month number [1-12]: '
-      read(*,*) imo
-      if(imo.lt.1.or.imo.gt.12) go to 2
+*** grs80
 
-    3 write(*,'(a$)') 'Enter day          [1-31]: '
-      read(*,*) idy
-      if(idy.lt.1.or.idy.gt.31) go to 3
+      a=6378137.d0
+      e2=6.69438002290341574957d-03
 
-    4 write(*,'(a$)') 'Lat. (pos N.) [- 90, +90]: '
-      read(*,*) glad
-      if(glad.lt.-90.d0.or.glad.gt.90.d0) go to 4
+*** check inputs section
 
-    5 write(*,'(a$)') 'Lon. (pos E.) [-360,+360]: '
-      read(*,*) glod
-      if(glod.lt.-360.d0.or.glod.gt.360.d0) go to 5
+      if(glad.lt.-90.d0.or.glad.gt.90.d0) then
+        write(lout,'(a,G0.9)') 'ERROR: lat NOT in [-90,+90]:',glad
+        go to 98
+      endif
+
+      if(glod.lt.-360.d0.or.glod.gt.360.d0) then
+        write(lout,'(a,G0.9)') 'ERROR: lon NOT in [-360,+360]:',glod
+        go to 98
+      endif
+
+      if(iyr.lt.1901.or.iyr.gt.2099) then
+        write(lout,'(a,i5)') 'ERROR: year NOT in [1901-2099]:',iyr
+        go to 98
+      endif
+
+      if(imo.lt.1.or.imo.gt.12) then
+        write(lout,'(a,i3)') 'ERROR: month NOT in [1-12]:',imo
+        go to 98
+      endif
+
+      if(idy.lt.1.or.idy.gt.31) then
+        write(lout,'(a,i3)') 'ERROR: day NOT in [1-31]:',idy
+        go to 98
+      endif
+
+*** output header
+
+      write(lout,'(a,i5,2i3)') '# year, month, day =',iyr,imo,idy
+      write(lout,'(a,2f15.9)') '# lat, lon =',glad,glod
 
 *** position of observing point (positive East)
 
@@ -60,52 +261,66 @@
       xsta(2)=y0
       xsta(3)=z0
 
-*** header
-
-      write(lout,'(a,i5,2i3)') 'year,month,day= ',iyr,imo,idy
-      write(lout,'(a,2f15.9)') 'lat, East lon.= ',glad,glod
-
 *** here comes the sun  (and the moon)  (go, tide!)
 
+      !*** UTC time system
       ihr=   0
       imn=   0
-      sec=0.d0                                         !*** UTC time system
+      sec=0.d0
       call civmjd(iyr,imo,idy,ihr,imn,sec,mjd,fmjd)
-      call mjdciv(mjd,fmjd,iyr,imo,idy,ihr,imn,sec)    !*** normalize civil time
+      !*** normalize civil time
+      call mjdciv(mjd,fmjd,iyr,imo,idy,ihr,imn,sec)
       call setjd0(iyr,imo,idy)
 
-      tdel2=1.d0/60.d0/24.d0                           !*** 1 minute steps
-      do iloop=0,60*24
-        lflag=.false.                           !*** false means flag not raised
-        call sunxyz (mjd,fmjd,rsun,lflag)                   !*** mjd/fmjd in UTC
-        call moonxyz(mjd,fmjd,rmoon,lflag)                  !*** mjd/fmjd in UTC
-        call detide (xsta,mjd,fmjd,rsun,rmoon,etide,lflag)  !*** mjd/fmjd in UTC
+*** loop over time
+
+      !*** tdel2=1.d0/60.d0/24.d0
+      !*** do iloop=0,60*24
+      nloop=60*60*24/step_sec
+      tdel2=1.d0/DFLOAT(nloop)
+      do iloop=0,nloop
+        !*** false means flag not raised
+        !*** mjd/fmjd in UTC
+        !*** mjd/fmjd in UTC
+        !*** mjd/fmjd in UTC
+        lflag=.false.
+        call sunxyz (mjd,fmjd,rsun,lflag)
+        call moonxyz(mjd,fmjd,rmoon,lflag)
+        call detide (xsta,mjd,fmjd,rsun,rmoon,etide,lflag)
         xt = etide(1)
         yt = etide(2)
         zt = etide(3)
 
 *** determine local geodetic horizon components (topocentric)
 
-        call rge(gla0,glo0,ut,vt,wt,xt,   yt,   zt)       !*** tide vector
+        !*** tide vector
+        call rge(gla0,glo0,ut,vt,wt,xt,   yt,   zt)
 
-        call mjdciv(mjd,fmjd               +0.001d0/86400.d0,
-     *              iyr,imo,idy,ihr,imn,sec-0.001d0)
+        call mjdciv(mjd,fmjd,iyr,imo,idy,ihr,imn,sec)
 
+        !*** write output to file
         tsec=ihr*3600.d0+imn*60.d0+sec
-        write(lout,'(f8.1,3f10.6)') tsec,ut,vt,wt
+        write(lout,'((f8.1,:,",  "),*(f10.6,:,",  "))') tsec,vt,ut,wt
+
+        !*** update fmjd for the next round
         fmjd=fmjd+tdel2
-        fmjd=(idnint(fmjd*86400.d0))/86400.d0      !*** force 1 sec. granularity
+        !*** force 1 sec. granularity
+        fmjd=(idnint(fmjd*86400.d0))/86400.d0
       enddo
 
-*** test flag and end of processing
+*** end of processing and flag of leap second
 
       if(lflag) then
         write(*,'(a)') 'Mild Warning -- time crossed leap second table'
         write(*,'(a)') '  boundaries.  Boundary edge value used instead'
       endif
-      write(*,'(a)') 'End Of Processing -------------------------------'
 
-      end
+      go to 99
+   98 write(*,'(a)') 'Check arguments.'
+
+      return
+   99 end
+
 *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       subroutine detide(xsta,mjd,fmjd,xsun,xmon,dxtide,lflag)
 
@@ -154,8 +369,10 @@
       double precision h20,l20,h3,l3,h2,l2
       double precision mass_ratio_sun,mass_ratio_moon
       logical lflag,leapflag
-      save  /limitflag/                !*** leap second table limit flag
-      common/limitflag/leapflag        !*** leap second table limit flag
+      !*** leap second table limit flag
+      !*** leap second table limit flag
+      save  /limitflag/
+      common/limitflag/leapflag
 
 *** nominal second degree and third degree love numbers and shida numbers
 
@@ -165,19 +382,26 @@
 *** first, convert UTC time into TT time (and, bring leapflag into variable)
 
       leapflag=lflag
-      tsecutc =fmjd*86400.d0                       !*** UTC time (sec of day)
-      tsectt  =utc2ttt(tsecutc)                    !*** TT  time (sec of day)
-      fmjdtt  =tsectt/86400.d0                     !*** TT  time (fract. day)
+      !*** UTC time (sec of day)
+      !*** TT  time (sec of day)
+      !*** TT  time (fract. day)
+      tsecutc =fmjd*86400.d0
+      tsectt  =utc2ttt(tsecutc)
+      fmjdtt  =tsectt/86400.d0
       lflag   = leapflag
 
-      dmjdtt=mjd+fmjdtt                           !*** float MJD in TT
+      !*** float MJD in TT
+      dmjdtt=mjd+fmjdtt
 *** commented line was live code in dehanttideinelMJD.f
 *** changed on the suggestion of Dr. Don Kim, UNB -- 09mar21
 *** Julian date for 2000 January 1 00:00:00.0 UT is  JD 2451544.5
 *** MJD         for 2000 January 1 00:00:00.0 UT is MJD   51544.0
-***** t=(dmjdtt-51545.d0)/36525.d0                !*** days to centuries, TT
-      t=(dmjdtt-51544.d0)/36525.d0                !*** days to centuries, TT
-      fhr=(dmjdtt-int(dmjdtt))*24.d0              !*** hours in the day, TT
+***** t=(dmjdtt-51545.d0)/36525.d0
+      !*** days to centuries, TT
+      !*** days to centuries, TT
+      t=(dmjdtt-51544.d0)/36525.d0
+      !*** hours in the day, TT
+      fhr=(dmjdtt-int(dmjdtt))*24.d0
 
 *** scalar product of station vector with sun/moon vector
 
@@ -390,56 +614,78 @@
      * -3., 2., 0., 0., 0.,-0.01,-0.01, 0.0 , 0.0,
      * -2., 0., 1.,-1., 0.,-0.02,-0.01, 0.0 , 0.0,
 *****-----------------------------------------------------------------------
-****** -2., 0., 1., 0., 0.,-0.08,-0.05, 0.01,-0.02,      !*** original entry
-     * -2., 0., 1., 0., 0.,-0.08, 0.00, 0.01, 0.01,      !*** table 7.5a
+****** -2., 0., 1., 0., 0.,-0.08,-0.05, 0.01,-0.02,
+      !*** original entry
+      !*** table 7.5a
+     * -2., 0., 1., 0., 0.,-0.08, 0.00, 0.01, 0.01,
 *****-----------------------------------------------------------------------
      * -2., 2.,-1., 0., 0.,-0.02,-0.01, 0.0 , 0.0,
 *****-----------------------------------------------------------------------
-****** -1., 0., 0.,-1., 0.,-0.10,-0.05, 0.0 ,-0.02,      !*** original entry
-     * -1., 0., 0.,-1., 0.,-0.10, 0.00, 0.00, 0.00,      !*** table 7.5a
+****** -1., 0., 0.,-1., 0.,-0.10,-0.05, 0.0 ,-0.02,
+      !*** original entry
+      !*** table 7.5a
+     * -1., 0., 0.,-1., 0.,-0.10, 0.00, 0.00, 0.00,
 *****-----------------------------------------------------------------------
-****** -1., 0., 0., 0., 0.,-0.51,-0.26,-0.02,-0.12,      !*** original entry
-     * -1., 0., 0., 0., 0.,-0.51, 0.00,-0.02, 0.03,      !*** table 7.5a
+****** -1., 0., 0., 0., 0.,-0.51,-0.26,-0.02,-0.12,
+      !*** original entry
+      !*** table 7.5a
+     * -1., 0., 0., 0., 0.,-0.51, 0.00,-0.02, 0.03,
 *****-----------------------------------------------------------------------
      * -1., 2., 0., 0., 0., 0.01, 0.0 , 0.0 , 0.0,
      *  0.,-2., 1., 0., 0., 0.01, 0.0 , 0.0 , 0.0,
      *  0., 0.,-1., 0., 0., 0.02, 0.01, 0.0 , 0.0,
 *****-----------------------------------------------------------------------
-******  0., 0., 1., 0., 0., 0.06, 0.02, 0.0 , 0.01,      !*** original entry
-     *  0., 0., 1., 0., 0., 0.06, 0.00, 0.00, 0.00,      !*** table 7.5a
+******  0., 0., 1., 0., 0., 0.06, 0.02, 0.0 , 0.01,
+      !*** original entry
+      !*** table 7.5a
+     *  0., 0., 1., 0., 0., 0.06, 0.00, 0.00, 0.00,
 *****-----------------------------------------------------------------------
      *  0., 0., 1., 1., 0., 0.01, 0.0 , 0.0 , 0.0,
      *  0., 2.,-1., 0., 0., 0.01, 0.0 , 0.0 , 0.0,
-     *  1.,-3., 0., 0., 1.,-0.06, 0.00, 0.00, 0.00,      !*** table 7.5a
+      !*** table 7.5a
+     *  1.,-3., 0., 0., 1.,-0.06, 0.00, 0.00, 0.00,
      *  1.,-2., 0., 1., 0., 0.01, 0.0 , 0.0 , 0.0,
 *****-----------------------------------------------------------------------
-******  1.,-2., 0., 0., 0.,-1.23,-0.05, 0.06,-0.06,      !*** original entry
-     *  1.,-2., 0., 0., 0.,-1.23,-0.07, 0.06, 0.01,      !*** table 7.5a
+******  1.,-2., 0., 0., 0.,-1.23,-0.05, 0.06,-0.06,
+      !*** original entry
+      !*** table 7.5a
+     *  1.,-2., 0., 0., 0.,-1.23,-0.07, 0.06, 0.01,
 *****-----------------------------------------------------------------------
      *  1.,-1., 0., 0.,-1., 0.02, 0.0 , 0.0 , 0.0,
      *  1.,-1., 0., 0., 1., 0.04, 0.0 , 0.0 , 0.0,
-     *  1., 0., 0.,-1., 0.,-0.22, 0.01, 0.01, 0.00,      !*** table 7.5a
+      !*** table 7.5a
+     *  1., 0., 0.,-1., 0.,-0.22, 0.01, 0.01, 0.00,
 *****-----------------------------------------------------------------------
-******  1., 0., 0., 0., 0.,12.02,-0.45,-0.66, 0.17,      !*** original entry
-     *  1., 0., 0., 0., 0.,12.00,-0.78,-0.67,-0.03,      !*** table 7.5a
+******  1., 0., 0., 0., 0.,12.02,-0.45,-0.66, 0.17,
+      !*** original entry
+      !*** table 7.5a
+     *  1., 0., 0., 0., 0.,12.00,-0.78,-0.67,-0.03,
 *****-----------------------------------------------------------------------
-******  1., 0., 0., 1., 0., 1.73,-0.07,-0.10, 0.02,      !*** original entry
-     *  1., 0., 0., 1., 0., 1.73,-0.12,-0.10, 0.00,      !*** table 7.5a
+******  1., 0., 0., 1., 0., 1.73,-0.07,-0.10, 0.02,
+      !*** original entry
+      !*** table 7.5a
+     *  1., 0., 0., 1., 0., 1.73,-0.12,-0.10, 0.00,
 *****-----------------------------------------------------------------------
      *  1., 0., 0., 2., 0.,-0.04, 0.0 , 0.0 , 0.0,
 *****-----------------------------------------------------------------------
-******  1., 1., 0., 0.,-1.,-0.50, 0.0 , 0.03, 0.0,       !*** original entry
-     *  1., 1., 0., 0.,-1.,-0.50,-0.01, 0.03, 0.00,      !*** table 7.5a
+******  1., 1., 0., 0.,-1.,-0.50, 0.0 , 0.03, 0.0,
+      !*** original entry
+      !*** table 7.5a
+     *  1., 1., 0., 0.,-1.,-0.50,-0.01, 0.03, 0.00,
 *****-----------------------------------------------------------------------
      *  1., 1., 0., 0., 1., 0.01, 0.0 , 0.0 , 0.0,
 *****-----------------------------------------------------------------------
-******  0., 1., 0., 1.,-1.,-0.01, 0.0 , 0.0 , 0.0,       !*** original entry
-     *  1., 1., 0., 1.,-1.,-0.01, 0.0 , 0.0 , 0.0,       !*** v.dehant 2007
+******  0., 1., 0., 1.,-1.,-0.01, 0.0 , 0.0 , 0.0,
+      !*** original entry
+      !*** v.dehant 2007
+     *  1., 1., 0., 1.,-1.,-0.01, 0.0 , 0.0 , 0.0,
 *****-----------------------------------------------------------------------
      *  1., 2.,-2., 0., 0.,-0.01, 0.0 , 0.0 , 0.0,
 *****-----------------------------------------------------------------------
-******  1., 2., 0., 0., 0.,-0.12, 0.01, 0.01, 0.0,       !*** original entry
-     *  1., 2., 0., 0., 0.,-0.11, 0.01, 0.01, 0.00,      !*** table 7.5a
+******  1., 2., 0., 0., 0.,-0.12, 0.01, 0.01, 0.0,
+      !*** original entry
+      !*** table 7.5a
+     *  1., 2., 0., 0., 0.,-0.11, 0.01, 0.01, 0.00,
 *****-----------------------------------------------------------------------
      *  2.,-2., 1., 0., 0.,-0.01, 0.0 , 0.0 , 0.0,
      *  2., 0.,-1., 0., 0.,-0.02, 0.02, 0.0 , 0.01,
@@ -730,23 +976,30 @@
       implicit double precision(a-h,o-z)
       dimension rm(3)
       logical lflag,leapflag
-      save  /limitflag/                !*** leap second table limit flag
-      common/limitflag/leapflag        !*** leap second table limit flag
+      !*** leap second table limit flag
+      !*** leap second table limit flag
+      save  /limitflag/
+      common/limitflag/leapflag
       common/stuff/rad,pi,pi2
 
 *** use TT for lunar ephemerides
 
       leapflag=lflag
-      tsecutc=fmjd*86400.d0                       !*** UTC time (sec of day)
-      tsectt =utc2ttt(tsecutc)                    !*** TT  time (sec of day)
-      fmjdtt =tsectt/86400.d0                     !*** TT  time (fract. day)
+      !*** UTC time (sec of day)
+      !*** TT  time (sec of day)
+      !*** TT  time (fract. day)
+      tsecutc=fmjd*86400.d0
+      tsectt =utc2ttt(tsecutc)
+      fmjdtt =tsectt/86400.d0
       lflag   = leapflag
 
 *** julian centuries since 1.5 january 2000 (J2000)
 ***   (note: also low precision use of mjd --> tjd)
 
-      tjdtt = mjd+fmjdtt+2400000.5d0              !*** Julian Date, TT
-      t     = (tjdtt - 2451545.d0)/36525.d0       !*** julian centuries, TT
+      !*** Julian Date, TT
+      !*** julian centuries, TT
+      tjdtt = mjd+fmjdtt+2400000.5d0
+      t     = (tjdtt - 2451545.d0)/36525.d0
 
 *** el0 -- mean longitude of Moon (deg)
 *** el  -- mean anomaly of Moon (deg)
@@ -764,7 +1017,8 @@
 
 *** longitude w.r.t. equinox and ecliptic of year 2000
 
-      selond=el0                                      !*** eq 3.48, p.72
+      !*** eq 3.48, p.72
+      selond=el0
      * +22640.d0/3600.d0*dsin((el        )/rad)
      * +  769.d0/3600.d0*dsin((el+el     )/rad)
      * - 4586.d0/3600.d0*dsin((el-d-d    )/rad)
@@ -782,10 +1036,12 @@
 
 *** latitude w.r.t. equinox and ecliptic of year 2000
 
-      q = 412.d0/3600.d0*dsin((f+f)/rad)              !*** temporary term
+      !*** temporary term
+      q = 412.d0/3600.d0*dsin((f+f)/rad)
      *   +541.d0/3600.d0*dsin((elp)/rad)
 
-      selatd=                                         !*** eq 3.49, p.72
+      !*** eq 3.49, p.72
+      selatd=
      * +18520.d0/3600.d0*dsin((f+selond-el0+q)/rad)
      * -  526.d0/3600.d0*dsin((f-d-d     )/rad)
      * +   44.d0/3600.d0*dsin((el+f-d-d  )/rad)
@@ -797,7 +1053,8 @@
 
 *** distance from Earth center to Moon (m)
 
-      rse= 385000.d0*1000.d0                          !*** eq 3.50, p.72
+      !*** eq 3.50, p.72
+      rse= 385000.d0*1000.d0
      *   -  20905.d0*1000.d0*dcos((el        )/rad)
      *   -   3699.d0*1000.d0*dcos((d+d-el    )/rad)
      *   -   2956.d0*1000.d0*dcos((d+d       )/rad)
@@ -811,28 +1068,36 @@
 
 *** precession of equinox wrt. J2000   (p.71)
 
-      selond=selond + 1.3972d0*t                         !*** degrees
+      !*** degrees
+      selond=selond + 1.3972d0*t
 
 *** position vector of moon (mean equinox & ecliptic of J2000) (EME2000, ICRF)
 ***                         (plus long. advance due to precession -- eq. above)
 
-      oblir=23.43929111d0/rad        !*** obliquity of the J2000 ecliptic
+      !*** obliquity of the J2000 ecliptic
+      oblir=23.43929111d0/rad
 
       sselat=dsin(selatd/rad)
       cselat=dcos(selatd/rad)
       sselon=dsin(selond/rad)
       cselon=dcos(selond/rad)
 
-      t1 = rse*cselon*cselat        !*** meters          !*** eq. 3.51, p.72
-      t2 = rse*sselon*cselat        !*** meters          !*** eq. 3.51, p.72
-      t3 = rse*       sselat        !*** meters          !*** eq. 3.51, p.72
+      !*** meters  !*** eq. 3.51, p.72
+      !*** meters  !*** eq. 3.51, p.72
+      !*** meters  !*** eq. 3.51, p.72
+      t1 = rse*cselon*cselat
+      t2 = rse*sselon*cselat
+      t3 = rse*       sselat
 
-      call rot1(-oblir,t1,t2,t3,rm1,rm2,rm3)             !*** eq. 3.51, p.72
+      !*** eq. 3.51, p.72
+      call rot1(-oblir,t1,t2,t3,rm1,rm2,rm3)
 
 *** convert position vector of moon to ECEF  (ignore polar motion/LOD)
 
-      call getghar(mjd,fmjd,ghar)                        !*** sec 2.3.1,p.33
-      call rot3(ghar,rm1,rm2,rm3,rm(1),rm(2),rm(3))      !*** eq. 2.89, p.37
+      !*** sec 2.3.1,p.33
+      !*** eq. 2.89, p.37
+      call getghar(mjd,fmjd,ghar)
+      call rot3(ghar,rm1,rm2,rm3,rm(1),rm(2),rm(3))
 
       return
       end
@@ -850,16 +1115,22 @@
 *** need UTC to get sidereal time ("astronomy on the personal computer", 4th ed)
 ***                               (pg.43, montenbruck & pfleger, springer, 2005)
 
-      tsecutc=fmjd*86400.d0                        !*** UTC time (sec of day)
-      fmjdutc=tsecutc/86400.d0                     !*** UTC time (fract. day)
+      !*** UTC time (sec of day)
+      !*** UTC time (fract. day)
+      tsecutc=fmjd*86400.d0
+      fmjdutc=tsecutc/86400.d0
 
-***** d = MJD - 51544.5d0                               !*** footnote
-      d =(mjd-51544) + (fmjdutc-0.5d0)                  !*** days since J2000
+***** d = MJD - 51544.5d0
+      !*** footnote
+      !*** days since J2000
+      d =(mjd-51544) + (fmjdutc-0.5d0)
 
 *** greenwich hour angle for J2000  (12:00:00 on 1 Jan 2000)
 
-***** ghad = 100.46061837504d0 + 360.9856473662862d0*d  !*** eq. 2.85 (+digits)
-      ghad = 280.46061837504d0 + 360.9856473662862d0*d  !*** corrn.   (+digits)
+***** ghad = 100.46061837504d0 + 360.9856473662862d0*d
+      !*** eq. 2.85 (+digits)
+      !*** corrn.   (+digits)
+      ghad = 280.46061837504d0 + 360.9856473662862d0*d
 
 **** normalize to 0-360 and convert to radians
 
@@ -892,58 +1163,78 @@
       implicit double precision(a-h,o-z)
       dimension rs(3)
       logical lflag,leapflag
-      save  /limitflag/                !*** leap second table limit flag
-      common/limitflag/leapflag        !*** leap second table limit flag
+      !*** leap second table limit flag
+      !*** leap second table limit flag
+      save  /limitflag/
+      common/limitflag/leapflag
       common/stuff/rad,pi,pi2
 
 *** mean elements for year 2000, sun ecliptic orbit wrt. Earth
 
-      obe =23.43929111d0/rad        !*** obliquity of the J2000 ecliptic
+      !*** obliquity of the J2000 ecliptic
+      obe =23.43929111d0/rad
       sobe=dsin(obe)
       cobe=dcos(obe)
-      opod=282.9400d0               !*** RAAN + arg.peri.  (deg.)
+      !*** RAAN + arg.peri.  (deg.)
+      opod=282.9400d0
 
 *** use TT for solar ephemerides
 
       leapflag=lflag
-      tsecutc=fmjd*86400.d0                       !*** UTC time (sec of day)
-      tsectt =utc2ttt(tsecutc)                    !*** TT  time (sec of day)
-      fmjdtt =tsectt/86400.d0                     !*** TT  time (fract. day)
+      !*** UTC time (sec of day)
+      !*** TT  time (sec of day)
+      !*** TT  time (fract. day)
+      tsecutc=fmjd*86400.d0
+      tsectt =utc2ttt(tsecutc)
+      fmjdtt =tsectt/86400.d0
       lflag   = leapflag
 
 *** julian centuries since 1.5 january 2000 (J2000)
 ***   (note: also low precision use of mjd --> tjd)
 
-      tjdtt = mjd+fmjdtt+2400000.5d0              !*** Julian Date, TT
-      t     = (tjdtt - 2451545.d0)/36525.d0       !*** julian centuries, TT
-      emdeg = 357.5256d0 + 35999.049d0*t          !*** degrees
-      em    = emdeg/rad                           !*** radians
-      em2   = em+em                               !*** radians
+      !*** Julian Date, TT
+      !*** julian centuries, TT
+      !*** degrees
+      !*** radians
+      !*** radians
+      tjdtt = mjd+fmjdtt+2400000.5d0
+      t     = (tjdtt - 2451545.d0)/36525.d0
+      emdeg = 357.5256d0 + 35999.049d0*t
+      em    = emdeg/rad
+      em2   = em+em
 
 *** series expansions in mean anomaly, em   (eq. 3.43, p.71)
 
-      r=(149.619d0-2.499d0*dcos(em)-0.021d0*dcos(em2))*1.d9      !*** m.
+      !*** m.
+      r=(149.619d0-2.499d0*dcos(em)-0.021d0*dcos(em2))*1.d9
       slond=opod + emdeg + (6892.d0*dsin(em)+72.d0*dsin(em2))/3600.d0
 
 *** precession of equinox wrt. J2000   (p.71)
 
-      slond=slond + 1.3972d0*t                              !*** degrees
+      !*** degrees
+      slond=slond + 1.3972d0*t
 
 *** position vector of sun (mean equinox & ecliptic of J2000) (EME2000, ICRF)
 ***                        (plus long. advance due to precession -- eq. above)
 
-      slon =slond/rad                                       !*** radians
+      !*** radians
+      slon =slond/rad
       sslon=dsin(slon)
       cslon=dcos(slon)
 
-      rs1 = r*cslon              !*** meters             !*** eq. 3.46, p.71
-      rs2 = r*sslon*cobe         !*** meters             !*** eq. 3.46, p.71
-      rs3 = r*sslon*sobe         !*** meters             !*** eq. 3.46, p.71
+      !*** meters  !*** eq. 3.46, p.71
+      !*** meters  !*** eq. 3.46, p.71
+      !*** meters  !*** eq. 3.46, p.71
+      rs1 = r*cslon
+      rs2 = r*sslon*cobe
+      rs3 = r*sslon*sobe
 
 *** convert position vector of sun to ECEF  (ignore polar motion/LOD)
 
-      call getghar(mjd,fmjd,ghar)                        !*** sec 2.3.1,p.33
-      call rot3(ghar,rs1,rs2,rs3,rs(1),rs(2),rs(3))      !*** eq. 2.89, p.37
+      !*** sec 2.3.1,p.33
+      !*** eq. 2.89, p.37
+      call getghar(mjd,fmjd,ghar)
+      call rot3(ghar,rs1,rs2,rs3,rs(1),rs(2),rs(3))
 
       return
       end
@@ -1179,6 +1470,7 @@
 
       return
       end
+*-----------------------------------------------------------------------
       subroutine mjdciv(mjd,fmjd,iyr,imo,idy,ihr,imn,sec)
 
 *** convert modified julian date to civil date
@@ -1261,13 +1553,18 @@
 ***** http://aa.usno.navy.mil/data/docs/JulianDate.php
 
       implicit double precision(a-h,o-z)
-      parameter(MJDUPPER=58664)    !*** upper limit, leap second table, 2019jun30
-***** parameter(MJDUPPER=58299)    !*** upper limit, leap second table, 2018jun30
-      parameter(MJDLOWER=41317)    !*** lower limit, leap second table, 1972jan01
+      !*** upper limit, leap second table, 2019jun30
+      !*** upper limit, leap second table, 2018jun30
+      !*** lower limit, leap second table, 1972jan01
+      parameter(MJDUPPER=58664)
+***** parameter(MJDUPPER=58299)
+      parameter(MJDLOWER=41317)
 
-      logical leapflag             !*** leap second table limit flag
+      !*** leap second table limit flag
+      logical leapflag
       save  /limitflag/
-      common/limitflag/leapflag    !*** leap second table limit flag
+      !*** leap second table limit flag
+      common/limitflag/leapflag
 
       save  /mjdoff/
       common/mjdoff/mjd0
@@ -1292,16 +1589,20 @@
 *** test upper table limit         (upper limit set by bulletin C memos)
 
       if(mjd0t.gt.MJDUPPER) then
-        leapflag  =.true.               !*** true means flag *IS* raised
-        getutcmtai= -37.d0              !*** return the upper table value
+        !*** true means flag *IS* raised
+        !*** return the upper table value
+        leapflag  =.true.
+        getutcmtai= -37.d0
         return
       endif
 
 *** test lower table limit
 
       if(mjd0t.lt.MJDLOWER) then
-        leapflag=.true.                 !*** true means flag *IS* raised
-        getutcmtai= -10.d0              !*** return the lower table value
+        !*** true means flag *IS* raised
+        !*** return the lower table value
+        leapflag=.true.
+        getutcmtai= -10.d0
         return
       endif
 
@@ -1340,61 +1641,89 @@
 
 *** test against newest leaps first
 
-      if    (mjd0t.ge.57754) then       !*** 2017 JAN 1 = 57754
+      if    (mjd0t.ge.57754) then
+        !*** 2017 JAN 1 = 57754
         tai_utc = 37.d0
-      elseif(mjd0t.ge.57204) then       !*** 2015 JUL 1 = 57204
+      elseif(mjd0t.ge.57204) then
+        !*** 2015 JUL 1 = 57204
         tai_utc = 36.d0
-      elseif(mjd0t.ge.56109) then       !*** 2012 JUL 1 = 56109
+      elseif(mjd0t.ge.56109) then
+        !*** 2012 JUL 1 = 56109
         tai_utc = 35.d0
-      elseif(mjd0t.ge.54832) then       !*** 2009 JAN 1 = 54832
+      elseif(mjd0t.ge.54832) then
+        !*** 2009 JAN 1 = 54832
         tai_utc = 34.d0
-      elseif(mjd0t.ge.53736) then       !*** 2006 JAN 1 = 53736
+      elseif(mjd0t.ge.53736) then
+        !*** 2006 JAN 1 = 53736
         tai_utc = 33.d0
-      elseif(mjd0t.ge.51179) then       !*** 1999 JAN 1 = 51179
+      elseif(mjd0t.ge.51179) then
+        !*** 1999 JAN 1 = 51179
         tai_utc = 32.d0
-      elseif(mjd0t.ge.50630) then       !*** 1997 JUL 1 = 50630
+      elseif(mjd0t.ge.50630) then
+        !*** 1997 JUL 1 = 50630
         tai_utc = 31.d0
-      elseif(mjd0t.ge.50083) then       !*** 1996 JAN 1 = 50083
+      elseif(mjd0t.ge.50083) then
+        !*** 1996 JAN 1 = 50083
         tai_utc = 30.d0
-      elseif(mjd0t.ge.49534) then       !*** 1994 JUL 1 = 49534
+      elseif(mjd0t.ge.49534) then
+        !*** 1994 JUL 1 = 49534
         tai_utc = 29.d0
-      elseif(mjd0t.ge.49169) then       !*** 1993 JUL 1 = 49169
+      elseif(mjd0t.ge.49169) then
+        !*** 1993 JUL 1 = 49169
         tai_utc = 28.d0
-      elseif(mjd0t.ge.48804) then       !*** 1992 JUL 1 = 48804
+      elseif(mjd0t.ge.48804) then
+        !*** 1992 JUL 1 = 48804
         tai_utc = 27.d0
-      elseif(mjd0t.ge.48257) then       !*** 1991 JAN 1 = 48257
+      elseif(mjd0t.ge.48257) then
+        !*** 1991 JAN 1 = 48257
         tai_utc = 26.d0
-      elseif(mjd0t.ge.47892) then       !*** 1990 JAN 1 = 47892
+      elseif(mjd0t.ge.47892) then
+        !*** 1990 JAN 1 = 47892
         tai_utc = 25.d0
-      elseif(mjd0t.ge.47161) then       !*** 1988 JAN 1 = 47161
+      elseif(mjd0t.ge.47161) then
+        !*** 1988 JAN 1 = 47161
         tai_utc = 24.d0
-      elseif(mjd0t.ge.46247) then       !*** 1985 JUL 1 = 46247
+      elseif(mjd0t.ge.46247) then
+        !*** 1985 JUL 1 = 46247
         tai_utc = 23.d0
-      elseif(mjd0t.ge.45516) then       !*** 1983 JUL 1 = 45516
+      elseif(mjd0t.ge.45516) then
+        !*** 1983 JUL 1 = 45516
         tai_utc = 22.d0
-      elseif(mjd0t.ge.45151) then       !*** 1982 JUL 1 = 45151
+      elseif(mjd0t.ge.45151) then
+        !*** 1982 JUL 1 = 45151
         tai_utc = 21.d0
-      elseif(mjd0t.ge.44786) then       !*** 1981 JUL 1 = 44786
+      elseif(mjd0t.ge.44786) then
+        !*** 1981 JUL 1 = 44786
         tai_utc = 20.d0
-      elseif(mjd0t.ge.44239) then       !*** 1980 JAN 1 = 44239
+      elseif(mjd0t.ge.44239) then
+        !*** 1980 JAN 1 = 44239
         tai_utc = 19.d0
-      elseif(mjd0t.ge.43874) then       !*** 1979 JAN 1 = 43874
+      elseif(mjd0t.ge.43874) then
+        !*** 1979 JAN 1 = 43874
         tai_utc = 18.d0
-      elseif(mjd0t.ge.43509) then       !*** 1978 JAN 1 = 43509
+      elseif(mjd0t.ge.43509) then
+        !*** 1978 JAN 1 = 43509
         tai_utc = 17.d0
-      elseif(mjd0t.ge.43144) then       !*** 1977 JAN 1 = 43144
+      elseif(mjd0t.ge.43144) then
+        !*** 1977 JAN 1 = 43144
         tai_utc = 16.d0
-      elseif(mjd0t.ge.42778) then       !*** 1976 JAN 1 = 42778
+      elseif(mjd0t.ge.42778) then
+        !*** 1976 JAN 1 = 42778
         tai_utc = 15.d0
-      elseif(mjd0t.ge.42413) then       !*** 1975 JAN 1 = 42413
+      elseif(mjd0t.ge.42413) then
+        !*** 1975 JAN 1 = 42413
         tai_utc = 14.d0
-      elseif(mjd0t.ge.42048) then       !*** 1974 JAN 1 = 42048
+      elseif(mjd0t.ge.42048) then
+        !*** 1974 JAN 1 = 42048
         tai_utc = 13.d0
-      elseif(mjd0t.ge.41683) then       !*** 1973 JAN 1 = 41683
+      elseif(mjd0t.ge.41683) then
+        !*** 1973 JAN 1 = 41683
         tai_utc = 12.d0
-      elseif(mjd0t.ge.41499) then       !*** 1972 JUL 1 = 41499
+      elseif(mjd0t.ge.41499) then
+        !*** 1972 JUL 1 = 41499
         tai_utc = 11.d0
-      elseif(mjd0t.ge.41317) then       !*** 1972 JAN 1 = 41317
+      elseif(mjd0t.ge.41317) then
+        !*** 1972 JAN 1 = 41317
         tai_utc = 10.d0
 
 *** should never, ever get here
