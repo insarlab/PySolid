@@ -9,15 +9,17 @@ This is research code provided to you "as is" with NO WARRANTIES OF CORRECTNESS.
 
 ### 1. Install
 
-#### a. Use pre-compiled version
+PySolid requires compilation of its underlying Fortran code.
 
-Use pip to install the pre-compiled version as below. This works for macOS/Linux only.
+#### a. Use `pip` to install the pre-compiled version
+
+Run the following to install the pre-compiled version. This works for macOS/Linux only. To update to the latest development version, use `pip install --upgrade`.
 
 ```bash
 pip install git+https://github.com/insarlab/PySolid.git
 ```
 
-#### b. Build from source
+#### b. Use `conda` to compile from source
 
 Or you could download the source code and compile it yourself. Below is an example using conda.
 
@@ -26,9 +28,9 @@ Or you could download the source code and compile it yourself. Below is an examp
 cd ~/tools
 git clone https://github.com/insarlab/PySolid.git
 
-# install dependencies
-# including the Fortran compiler from conda: gfortran_osx/linux-64
-conda install gfortran_osx-64 --file PySolid/requirements.txt
+# install dependencies via conda
+conda config --add channels conda-forge
+conda install --file PySolid/requirements.txt
 
 # compile Fortran code into a Python interface using f2py to generate:
 # solid.cpython-37m-darwin.so           for macOS
@@ -95,8 +97,8 @@ atr = {
     'WIDTH'  : 450,                # number of columns
     'X_FIRST': -126,               # min longitude in degree (upper left corner of the upper left pixel)
     'Y_FIRST': 43,                 # max laitude   in degree (upper left corner of the upper left pixel)
-    'X_STEP' :  0.000925926 * 30,  # output resolution in degree, ~2000 m
-    'Y_STEP' : -0.000925926 * 30,  # output resolution in degree, ~2000 m
+    'X_STEP' :  0.000925926 * 30,  # output resolution in degree
+    'Y_STEP' : -0.000925926 * 30,  # output resolution in degree
     'CENTER_LINE_UTC': 50864.0,    # UTC time of interest in seconds, e.g. acquisition time at the middle of SAR image
 }
 
