@@ -30,6 +30,11 @@ def calc_solid_earth_tides_grid(date_str, atr, step_size=1e3, display=False, ver
     """Calculate solid Earth tides (SET) in east/north/up direction
     for a spatial grid at a given date/time
 
+    Note that we use step_size to speedup >30 times, by feeding the Fortran code (SET calc and
+    text file writing) the coarse grid, then resize the output to the same shape as the original
+    input size. This uses the fact that SET varies slowly in space. Comparison w and w/o step_size
+    shows a difference in tide_u with max of 5e-8 m, thus negligible.
+
     Parameters: date_str  - str, date in YYYYMMDD format
                 atr       - dict, metadata including the following keys:
                                 LENGTH/WIDTTH

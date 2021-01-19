@@ -1,3 +1,14 @@
+*** Solid Earth tides (SET) prediction (section 7.1.2 in the 2003 IERS Conventions).
+*** The used syntax is mainly f77 with MIL-STD-1753 extension.
+*** Author: Dennis Milbert, 2018-06-01. The code is available at:
+***     http://geodesyworld.github.io/SOFTS/solid.htm and can be downloaded as:
+***     wget http://geodesyworld.github.io/SOFTS/solid.for.txt -O solid.for
+*** The code is based on dehanttideinel.f provided by V. Dehant, S. Mathews, 
+***     J. Gipson and C. Bruyninx. The latest version of dehanttideinel.f and its 
+***     dependent subroutines can be download from IERS conventions website as:
+***     wget -r -l1 --no-parent -R "index.html*" -nH --cut-dirs=3 https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel
+*** Z. Yunjun and S. Sangha, Sep 2020: modify solid() to solid_point/grid() as subroutines.
+
       subroutine solid_grid(iyr,imo,idy,ihh,imm,iss,
      * glad0,steplat,nlat,
      * glod0,steplon,nlon)
@@ -7,15 +18,6 @@
 ***            glad0/glad1/steplat     - float, north(Y_FIRST)/south/step(negative) in deg
 ***            glod0/glod1/steplon     - float, west(X_FIRST) /east /step(positive) in deg
 *** Returns:   latitude,  longitude,  SET_east,  SET_north,  SET_up
-***
-*** Written by Dennis Milbert in 2018-06-01. The code is available at:
-***     http://geodesyworld.github.io/SOFTS/solid.htm and can be downloaded as:
-***     wget http://geodesyworld.github.io/SOFTS/solid.for.txt -O solid.for
-***     The solid.for program is based on dehanttideinel.f provided by V. Dehant, 
-***     S. Mathews, J. Gipson and C. Bruyninx. The latest version of dehanttideinel.f 
-***     and its dependent subroutines can be download from IERS conventions website as:
-***     wget -r -l1 --no-parent -R "index.html*" -nH --cut-dirs=3 https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel
-*** Modified by Zhang Yunjun and Simran Sangha for a grid at given date/time, Sep 2020.
 
       implicit double precision(a-h,o-z)
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
@@ -173,20 +175,11 @@
 *-----------------------------------------------------------------------
       subroutine solid_point(glad,glod,iyr,imo,idy,step_sec)
 
-*** calculate solid earth tides at given location for one day in 1-min resolution
+*** calculate SET at given location for one day with step_sec seconds resolution
 *** Arguments: glad/glod   - float, latitude/longitude in deg
 ***            iyr/imo/idy - int, start date/time in UTC
 ***            step_sec    - int, time step in seconds
 *** Returns:   seconds,  SET_east,  SET_north,  SET_up
-***
-*** Written by Dennis Milbert in 2018-06-01. The code is available at:
-***     http://geodesyworld.github.io/SOFTS/solid.htm and can be downloaded as:
-***     wget http://geodesyworld.github.io/SOFTS/solid.for.txt -O solid.for
-***     The solid.for program is based on dehanttideinel.f provided by V. Dehant, 
-***     S. Mathews, J. Gipson and C. Bruyninx. The latest version of dehanttideinel.f 
-***     and its dependent subroutines can be download from IERS conventions website as:
-***     wget -r -l1 --no-parent -R "index.html*" -nH --cut-dirs=3 https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel
-*** Modified by Zhang Yunjun from program into subroutine with the step_sec argument, Jan 2021.
 
       implicit double precision(a-h,o-z)
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
