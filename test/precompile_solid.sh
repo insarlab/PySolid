@@ -38,6 +38,11 @@ for version in "3.6" "3.7" "3.8" "3.9"; do
     f2py -c -m solid solid.for
     echo "finished for python="$version
 
+    if [[ $version == "3.8"  ]]; then
+        echo "remove the installed dependencies before the loop of 3.9"
+        conda remove python=$version numpy $gfortran --yes
+    fi
+
 done
 
 

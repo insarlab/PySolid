@@ -64,18 +64,18 @@
         go to 98
       endif
 
-      if(ihh.lt.1.or.ihh.gt.24) then
-        write(lout,'(a,i3)') 'ERROR: hour NOT in [1-12]:',ihh
+      if(ihh.lt.0.or.ihh.gt.23) then
+        write(lout,'(a,i3)') 'ERROR: hour NOT in [0-23]:',ihh
         go to 98
       endif
 
-      if(imm.lt.1.or.imm.gt.60) then
-        write(lout,'(a,i3)') 'ERROR: minute NOT in [1-60]:',imm
+      if(imm.lt.0.or.imm.gt.59) then
+        write(lout,'(a,i3)') 'ERROR: minute NOT in [0-59]:',imm
         go to 98
       endif
 
-      if(iss.lt.1.or.iss.gt.60) then
-        write(lout,'(a,i3)') 'ERROR: second NOT in [1-60]:',iss
+      if(iss.lt.0.or.iss.gt.59) then
+        write(lout,'(a,i3)') 'ERROR: second NOT in [0-59]:',iss
         go to 98
       endif
 
