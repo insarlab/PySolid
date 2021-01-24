@@ -1,6 +1,7 @@
 [![Language](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/)
 [![Version](https://img.shields.io/badge/version-v0.1.0-green.svg)](https://github.com/insarlab/PySolid/releases)
 [![License](https://img.shields.io/badge/license-GPLv3-yellow.svg)](https://github.com/insarlab/PySolid/blob/main/LICENSE)
+[![render](https://img.shields.io/badge/render-nbviewer-orange.svg)](https://nbviewer.jupyter.org/github/insarlab/PySolid/tree/main/docs)
 
 ## PySolid
 
@@ -61,7 +62,7 @@ PySolid could compute solid Earth tides in two modes: **point** and **grid**. Bo
 + **Point mode:** compute 1D tides time-series at a specific point for a given time period
 + **Grid mode:** compute 2D tides grid at a specific time for a given spatial grid
 
-#### 2.1 Point mode
+#### 2.1 Point mode [[nbviewer](https://nbviewer.jupyter.org/github/insarlab/PySolid/blob/main/docs/plot_point_SET.ipynb)]
 
 ```python
 import datetime as dt
@@ -85,7 +86,7 @@ pysolid.plot_power_spectral_density4tides(tide_u, sample_spacing=step_sec)
   <img width="600" src="https://yunjunzhang.files.wordpress.com/2021/01/set_psd-1.png">
 </p>
 
-#### 2.2 Grid mode
+#### 2.2 Grid mode [[nbviewer](https://nbviewer.jupyter.org/github/insarlab/PySolid/blob/main/docs/plot_grid_SET.ipynb)]
 
 ```python
 import numpy as np

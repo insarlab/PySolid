@@ -12,6 +12,7 @@
 
 
 import os
+import collections
 import datetime as dt
 import numpy as np
 from scipy import signal
@@ -26,30 +27,61 @@ except ImportError:
     raise ImportError(msg)
 
 
-# Tidal constituents
+## Tidal constituents
 # https://en.wikipedia.org/wiki/Theory_of_tides#Tidal_constituents
-TIDAL_CONSTITUENTS = {
-    # semi-diurnal
-    r'$M_2$' : 12.421,  # principal lunar       semi-diurnal
-    r'$S_2$' : 12.000,  # principal solar       semi-diurnal
-    r'$N_2$' : 12.658,  # larger lunar elliptic semi-diurnal
-    r'$K_2$' : 11.967,  # lunisolar             semi-diurnal
-    # diurnal
-    r'$K_1$' : 23.934,  # lunar                 diurnal
-    r'$O_1$' : 25.819,  # lunar                 diurnal
-    r'$P_1$' : 24.066,  # solar                 diurnal
-    r'$Q_1$' : 26.868,  # larger lunar elliptic diurnal
-    # long period
-    r'$M_f$' : 13.661 * 24,  # lunisolar fornightly
-    r'$M_m$' : 27.555 * 24,  # lunar monthly
-}
+Tag = collections.namedtuple('Tag', 'species symbol period speed doodson_num noaa_order')
+TIDES = (
+    # Semi-diurnal
+    Tag('Principal lunar semidiurnal'              , r'$M_2$'      , 12.421, 28.984, 255.555, 1 ),
+    Tag('Principal solar semidiurnal'              , r'$S_2$'      , 12.000, 30.000, 273.555, 2 ),
+    Tag('Larger lunar elliptic semidiurnal'        , r'$N_2$'      , 12.658, 28.440, 245.655, 3 ),
+    Tag('Larger lunar evectional'                  , r'$v_2$'      , 12.626, 28.513, 247.455, 11),
+    Tag('Variational'                              , r'$\mu_2$'    , 12.872, 27.968, 237.555, 13),
+    Tag('Lunar elliptical semidiurnal second-order', '2"N'+r'$_2$' , 12.905, 27.895, 235.755, 14),
+    Tag('Smaller lunar evectional'                 , r'$\lambda_2$', 12.222, 29.456, 263.655, 16),
+    Tag('Larger solar elliptic'                    , r'$T_2$'      , 12.016, 29.959, 272.555, 27),
+    Tag('Smaller solar elliptic'                   , r'$R_2$'      , 11.984, 30.041, 274.555, 28),
+    Tag('Shallow water semidiurnal'                , r'$2SM_2$'    , 11.607, 31.016, 291.555, 31),
+    Tag('Smaller lunar elliptic semidiurnal'       , r'$L_2$'      , 12.192, 29.528, 265.455, 33),
+    Tag('Lunisolar semidiurnal'                    , r'$K_2$'      , 11.967, 30.082, 275.555, 35),
 
+    # Diurnal
+    Tag('Lunar diurnal'                  , r'$K_1$' , 23.934, 15.041, 165.555, 4 ),
+    Tag('Lunar diurnal'                  , r'$O_1$' , 25.819, 13.943, 145.555, 6 ),
+    Tag('Lunar diurnal'                  , r'$OO_1$', 22.306, 16.139, 185.555, 15),
+    Tag('Solar diurnal'                  , r'$S_1$' , 24.000, 15.000, 164.555, 17),
+    Tag('Smaller lunar elliptic diurnal' , r'$M_1$' , 24.841, 14.492, 155.555, 18),
+    Tag('Smaller lunar elliptic diurnal' , r'$J_1$' , 23.098, 15.585, 175.455, 19),
+    Tag('Larger lunar evectional diurnal', r'$\rho$', 26.723, 13.472, 137.455, 25),
+    Tag('Larger lunar elliptic diurnal'  , r'$Q_1$' , 26.868, 13.399, 135.655, 26),
+    Tag('Larger elliptic diurnal'        , r'$2Q_1$', 28.006, 12.854, 125.755, 29),
+    Tag('Solar diurnal'                  , r'$P_1$' , 24.066, 14.959, 163.555, 30),
+
+    # Long period
+    Tag('Lunar monthly'                  , r'$M_m$'   ,  661.311, 0.544, 65.455, 20),  # period  27.555 days
+    Tag('Solar semiannual'               , r'$S_{sa}$', 4383.076, 0.082, 57.555, 21),  # period 182.628 days
+    Tag('Solar annual'                   , r'$S_a$'   , 8766.153, 0.041, 56.555, 22),  # period 365.256 days
+    Tag('Lunisolar synodic fortnightly'  , r'$MS_f$'  ,  354.367, 1.016, 73.555, 23),  # period  14.765 days
+    Tag('Lunisolar fortnightly'          , r'$M_f$'   ,  327.860, 1.098, 75.555, 24),  # period  13.661 days
+
+    # Short period
+    Tag('Shallow water overtides of principal lunar', r'$M_4$'      , 6.210,  57.968, 455.555, 5 ),
+    Tag('Shallow water overtides of principal lunar', r'$M_6$'      , 4.140,  86.952, 655.555, 7 ),
+    Tag('Shallow water terdiurnal'                  , r'$MK_3$'     , 8.177,  44.025, 365.555, 8 ),
+    Tag('Shallow water overtides of principal solar', r'$S_4$'      , 6.000,  60.000, 491.555, 9 ),
+    Tag('Shallow water quarter diurnal'             , r'$MN_4$'     , 6.269,  57.424, 445.655, 10),
+    Tag('Shallow water overtides of principal solar', r'$S_6$'      , 4.000,  90.000, np.NaN , 12),
+    Tag('Lunar terdiurnal'                          , r'$M_3$'      , 8.280,  43.476, 355.555, 32),
+    Tag('Shallow water terdiurnal'                  , '2"MK'+r'$_3$', 8.386,  42.927, 345.555, 34),
+    Tag('Shallow water eighth diurnal'              , r'$M_8$'      , 3.105, 115.936, 855.555, 36),
+    Tag('Shallow water quarter diurnal'             , r'$MS_4$'     , 6.103,  58.984, 473.555, 37),
+)
 
 
 ##################################  Earth tides - point mode  ##################################
 def calc_solid_earth_tides_point(lat, lon, dt0, dt1, step_sec=60, display=False, verbose=True):
     """Calculate solid Earth tides (SET) in east/north/up direction
-    for the given time period at the given point (lat/lon)
+    for the given time period at the given point (lat/lon).
 
     Parameters: lat/lon  - float32, latitude/longitude of the point of interest
                 dt0/1    - datetime.datetime object, start/end date and time
@@ -122,7 +154,7 @@ def calc_solid_earth_tides_point(lat, lon, dt0, dt1, step_sec=60, display=False,
 
 def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
     """Calculate solid Earth tides (SET) in east/north/up direction
-    for one day at the given point (lat/lon)
+    for one day at the given point (lat/lon).
 
     Parameters: lat/lon  - float32, latitude/longitude of the point of interest
                 date_str - str, date in YYYYMMDD
@@ -196,8 +228,8 @@ def plot_solid_earth_tides_point(dt_out, tide_e, tide_n, tide_u, lalo=None):
     return
 
 
-def plot_power_spectral_density4tides(tide_ts, sample_spacing, out_fig=None, fig_dpi=300):
-    """Plot the power spectral density (PSD) of tides time-series
+def plot_power_spectral_density4tides(tide_ts, sample_spacing, out_fig=None, fig_dpi=300, min_psd=1500):
+    """Plot the power spectral density (PSD) of tides time-series.
     Note: for accurate PSD analysis, a long time-series, e.g. one year, is recommended.
     """
 
@@ -230,13 +262,7 @@ def plot_power_spectral_density4tides(tide_ts, sample_spacing, out_fig=None, fig
 
     # Tidal constituents
     for ax in axs:
-        pmin, pmax = ax.get_xlim()
-        for tide_name, tide_period in TIDAL_CONSTITUENTS.items():
-            if pmin <= tide_period <= pmax:
-                ind = np.argmin(np.abs(period - tide_period))
-                ymax = psd[ind] / ax.get_ylim()[1]
-                ax.axvline(x=tide_period, ymax=ymax, color='k', ls='--', lw=1)
-                ax.annotate(tide_name, xy=(tide_period, psd[ind]))
+        add_tidal_constituents(ax, period, psd, min_psd=min_psd)
     axs[0].annotate('semi-diurnal', xy=(0.05,0.85), xycoords='axes fraction')
     axs[1].annotate('diurnal',      xy=(0.05,0.85), xycoords='axes fraction')
 
@@ -246,5 +272,21 @@ def plot_power_spectral_density4tides(tide_ts, sample_spacing, out_fig=None, fig
         fig.savefig(out_fig, bbox_inches='tight', transparent=True, dpi=fig_dpi)
     plt.show()
 
+    return
+
+
+def add_tidal_constituents(ax, period, psd, min_psd=1500, verbose=False):
+    """Mark tidal constituents covered in the axes."""
+    pmin, pmax = ax.get_xlim()
+    for tide in TIDES:
+        if pmin <= tide.period <= pmax:
+            tide_psd = psd[np.argmin(np.abs(period - tide.period))]
+            if tide_psd >= min_psd:
+                ymax = tide_psd / ax.get_ylim()[1]
+                ax.axvline(x=tide.period, ymax=ymax, color='k', ls='--', lw=1)
+                ax.annotate(tide.symbol, xy=(tide.period, tide_psd))
+                if verbose:
+                    print('tide: speices={}, symbol={}, period={} hours, psd={} m^2/Hz'.format(
+                        tide.species, tide.symbol, tide.period, tide_psd))
     return
 
