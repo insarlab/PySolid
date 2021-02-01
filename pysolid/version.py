@@ -9,6 +9,7 @@ import collections
 Tag = collections.namedtuple('Tag', 'version date')
 release_history = (
     Tag('0.1.0', '2021-01-22'),
+    Tag('0.1.1', '2021-02-01'),
 )
 
 # latest release

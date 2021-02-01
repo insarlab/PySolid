@@ -1,5 +1,5 @@
 [![Language](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-v0.1.0-green.svg)](https://github.com/insarlab/PySolid/releases)
+[![Version](https://img.shields.io/badge/version-v0.1.1-green.svg)](https://github.com/insarlab/PySolid/releases)
 [![License](https://img.shields.io/badge/license-GPLv3-yellow.svg)](https://github.com/insarlab/PySolid/blob/main/LICENSE)
 [![render](https://img.shields.io/badge/render-nbviewer-orange.svg)](https://nbviewer.jupyter.org/github/insarlab/PySolid/tree/main/docs)
 
