@@ -1544,12 +1544,15 @@
 
 ***** "Julian Date Converter"
 ***** http://aa.usno.navy.mil/data/docs/JulianDate.php
+***** http://www.csgnetwork.com/julianmodifdateconv.html
 
       implicit double precision(a-h,o-z)
+      !*** upper limit, leap second table, 2021dec28
       !*** upper limit, leap second table, 2019jun30
       !*** upper limit, leap second table, 2018jun30
       !*** lower limit, leap second table, 1972jan01
-      parameter(MJDUPPER=58664)
+      parameter(MJDUPPER=59576)
+***** parameter(MJDUPPER=58664)
 ***** parameter(MJDUPPER=58299)
       parameter(MJDLOWER=41317)
 
@@ -1631,6 +1634,7 @@
 ***** other leap second references at:
 ***** http://hpiers.obspm.fr/eoppc/bul/bulc/Leap_Second_History.dat
 ***** http://hpiers.obspm.fr/eoppc/bul/bulc/bulletinc.dat
+***** File expires on 28 December 2021
 
 *** test against newest leaps first
 
