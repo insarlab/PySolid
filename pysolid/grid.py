@@ -26,21 +26,19 @@ except ImportError:
 
 
 ##################################  Earth tides - grid mode  ###################################
-def calc_solid_earth_tides_grid(date_str, atr, step_size=1e3, display=False, verbose=True):
-    """Calculate solid Earth tides (SET) in east/north/up direction
-    for a spatial grid at a given date/time
+def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbose=True):
+    """Calculate SET in east/north/up direction for a spatial grid at a given date/time.
 
     Note that we use step_size to speedup >30 times, by feeding the Fortran code (SET calc and
     text file writing) the coarse grid, then resize the output to the same shape as the original
     input size. This uses the fact that SET varies slowly in space. Comparison w and w/o step_size
     shows a difference in tide_u with max of 5e-8 m, thus negligible.
 
-    Parameters: date_str  - str, date in YYYYMMDD format
+    Parameters: dt_obj    - datetime.datetime object (with precision up to the second)
                 atr       - dict, metadata including the following keys:
                                 LENGTH/WIDTTH
                                 X/Y_FIRST
                                 X/Y_STEP
-                                CENTER_LINE_UTC
                 step_size - float, grid step feeded into the fortran code in meters
                                 to speedup the calculation
                 display   - bool, plot the calculated SET
@@ -52,10 +50,7 @@ def calc_solid_earth_tides_grid(date_str, atr, step_size=1e3, display=False, ver
                 tide_e, tide_n, tide_u = calc_solid_earth_tides_grid('20180219', atr)
     """
 
-    # time and location
-    utc_sec = float(atr['CENTER_LINE_UTC'])
-    t = dt.datetime.strptime(date_str, '%Y%m%d') + dt.timedelta(seconds=utc_sec)
-
+    # location
     lat0 = float(atr['Y_FIRST'])
     lon0 = float(atr['X_FIRST'])
     lat1 = lat0 + float(atr['Y_STEP']) * int(atr['LENGTH'])
@@ -63,7 +58,7 @@ def calc_solid_earth_tides_grid(date_str, atr, step_size=1e3, display=False, ver
 
     if verbose:
         print('PYSOLID: ----------------------------------------')
-        print('PYSOLID: datetime: {}'.format(t.isoformat()))
+        print('PYSOLID: datetime: {}'.format(dt_obj.isoformat()))
         print('PYSOLID: SNWE: {}'.format((lat1, lat0, lon0, lon1)))
 
     # step size
@@ -88,8 +83,9 @@ def calc_solid_earth_tides_grid(date_str, atr, step_size=1e3, display=False, ver
         print('SOLID  : calculating / writing data to txt file: {}'.format(txt_file))
 
     # Run twice to circumvent fortran bug which cuts off last file in loop - Simran, Jun 2020
-    for i in range(2):
-        solid.solid_grid(t.year, t.month, t.day, t.hour, t.minute, t.second,
+    for _ in range(2):
+        solid.solid_grid(dt_obj.year, dt_obj.month, dt_obj.day,
+                         dt_obj.hour, dt_obj.minute, dt_obj.second,
                          lat0, lat_step, length-1,
                          lon0, lon_step, width-1)
 
@@ -128,12 +124,12 @@ def calc_solid_earth_tides_grid(date_str, atr, step_size=1e3, display=False, ver
 
 #########################################  Plot  ###############################################
 def plot_solid_earth_tides_grid(tide_e, tide_n, tide_u, date_str=None, atr=None):
-    """Plot the solid Earth tides in ENU direction"""
+    """Plot the solid Earth tides in ENU direction."""
     from matplotlib import pyplot as plt, ticker
 
     # plot
     fig, axs = plt.subplots(nrows=1, ncols=3, figsize=[10, 4], sharex=True, sharey=True)
-    for ax, data, label in zip(axs.flatten(), 
+    for ax, data, label in zip(axs.flatten(),
                                [tide_e, tide_n, tide_u],
                                ['East', 'North', 'Up']):
         im = ax.imshow(data*100, cmap='RdBu')

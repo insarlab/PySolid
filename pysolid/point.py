@@ -80,8 +80,7 @@ TIDES = (
 
 ##################################  Earth tides - point mode  ##################################
 def calc_solid_earth_tides_point(lat, lon, dt0, dt1, step_sec=60, display=False, verbose=True):
-    """Calculate solid Earth tides (SET) in east/north/up direction
-    for the given time period at the given point (lat/lon).
+    """Calculate SET in east/north/up direction for the given time period at the given point (lat/lon).
 
     Parameters: lat/lon  - float32, latitude/longitude of the point of interest
                 dt0/1    - datetime.datetime object, start/end date and time
@@ -176,7 +175,7 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
 
     # Run twice to circumvent fortran bug which cuts off last file in loop - Simran, Jun 2020
     t = dt.datetime.strptime(date_str, '%Y%m%d')
-    for i in range(2):
+    for _ in range(2):
         solid.solid_point(lat, lon, t.year, t.month, t.day, step_sec)
 
     ## read data from text file
@@ -204,7 +203,6 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
 #########################################  Plot  ###############################################
 def plot_solid_earth_tides_point(dt_out, tide_e, tide_n, tide_u, lalo=None):
     """Plot the solid Earth tides at one point."""
-
     # plot
     fig, axs = plt.subplots(nrows=3, ncols=1, figsize=[12, 6], sharex=True)
     for ax, data, label in zip(axs.flatten(),
@@ -232,7 +230,6 @@ def plot_power_spectral_density4tides(tide_ts, sample_spacing, out_fig=None, fig
     """Plot the power spectral density (PSD) of tides time-series.
     Note: for accurate PSD analysis, a long time-series, e.g. one year, is recommended.
     """
-
     ## calc PSD
     freq, psd = signal.periodogram(tide_ts, fs=1/sample_spacing, scaling='density')
     # get rid of zero in the first element

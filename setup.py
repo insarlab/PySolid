@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pysolid',
-    version='0.1.1',
+    version='0.1.2',
     description="A Python wrapper for solid to compute solid Earth tides",
     url="https://github.com/insarlab/PySolid",
     author="Zhang Yunjun, Dennis Milbert",
@@ -21,6 +21,10 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     keywords="solid Eartth tides, deformation, geodesy, geophysics",
 
