@@ -113,7 +113,7 @@ atr = {
 # compute SET via pysolid
 (tide_e,
  tide_n,
- tide_u) = pysolid.calc_solid_earth_tides_grid(date_str, atr,
+ tide_u) = pysolid.calc_solid_earth_tides_grid(dt_obj, atr,
                                                display=False,
                                                verbose=True)
 

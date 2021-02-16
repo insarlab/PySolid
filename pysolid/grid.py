@@ -17,7 +17,7 @@ import datetime as dt
 from skimage.transform import resize
 
 try:
-    from . import solid
+    from .solid import solid_grid
 except ImportError:
     msg = "Cannot import name 'solid' from 'pysolid'!"
     msg += '\n    Maybe solid.for is NOT compiled yet.'
@@ -84,10 +84,10 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
 
     # Run twice to circumvent fortran bug which cuts off last file in loop - Simran, Jun 2020
     for _ in range(2):
-        solid.solid_grid(dt_obj.year, dt_obj.month, dt_obj.day,
-                         dt_obj.hour, dt_obj.minute, dt_obj.second,
-                         lat0, lat_step, length-1,
-                         lon0, lon_step, width-1)
+        solid_grid(dt_obj.year, dt_obj.month, dt_obj.day,
+                   dt_obj.hour, dt_obj.minute, dt_obj.second,
+                   lat0, lat_step, length-1,
+                   lon0, lon_step, width-1)
 
     ## read data from text file
     if verbose:
@@ -117,18 +117,19 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
 
     # plot
     if display:
-        plot_solid_earth_tides_grid(tide_e, tide_n, tide_u, date_str, atr)
+        plot_solid_earth_tides_grid(tide_e, tide_n, tide_u, dt_obj)
 
     return tide_e, tide_n, tide_u
 
 
 #########################################  Plot  ###############################################
-def plot_solid_earth_tides_grid(tide_e, tide_n, tide_u, date_str=None, atr=None):
+def plot_solid_earth_tides_grid(tide_e, tide_n, tide_u, dt_obj=None,
+                                out_fig=None, save=False, display=True):
     """Plot the solid Earth tides in ENU direction."""
     from matplotlib import pyplot as plt, ticker
 
     # plot
-    fig, axs = plt.subplots(nrows=1, ncols=3, figsize=[10, 4], sharex=True, sharey=True)
+    fig, axs = plt.subplots(nrows=1, ncols=3, figsize=[6, 3], sharex=True, sharey=True)
     for ax, data, label in zip(axs.flatten(),
                                [tide_e, tide_n, tide_u],
                                ['East', 'North', 'Up']):
@@ -138,10 +139,23 @@ def plot_solid_earth_tides_grid(tide_e, tide_n, tide_u, date_str=None, atr=None)
     fig.tight_layout()
 
     # super title
-    if (date_str is not None) and (atr is not None):
-        t = dt.datetime.strptime(date_str, '%Y%m%d') + dt.timedelta(seconds=float(atr['CENTER_LINE_UTC']))
-        axs[1].set_title('solid Earth tides at {}'.format(t.isoformat()), fontsize=12)
+    if dt_obj is not None:
+        axs[1].set_title('solid Earth tides at {}'.format(dt_obj.isoformat()), fontsize=12)
 
-    plt.show()
+    # output
+    if out_fig:
+        save = True
+
+    if save:
+        if not out_fig:
+            out_fig = os.path.abspath('SET_grid.png')
+        print('save figure to {}'.format(out_fig))
+        fig.savefig(out_fig, bbox_inches='tight', transparent=True, dpi=300)
+
+    if display:
+        print('showing...')
+        plt.show()
+    else:
+        plt.close()
+
     return
-

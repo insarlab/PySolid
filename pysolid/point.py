@@ -19,7 +19,7 @@ from scipy import signal
 from matplotlib import pyplot as plt, ticker, dates as mdates
 
 try:
-    from . import solid
+    from .solid import solid_point
 except ImportError:
     msg = "Cannot import name 'solid' from 'pysolid'!"
     msg += '\n    Maybe solid.for is NOT compiled yet.'
@@ -176,7 +176,7 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
     # Run twice to circumvent fortran bug which cuts off last file in loop - Simran, Jun 2020
     t = dt.datetime.strptime(date_str, '%Y%m%d')
     for _ in range(2):
-        solid.solid_point(lat, lon, t.year, t.month, t.day, step_sec)
+        solid_point(lat, lon, t.year, t.month, t.day, step_sec)
 
     ## read data from text file
     num_row = int(24 * 60 * 60 / step_sec)
@@ -201,10 +201,11 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
 
 
 #########################################  Plot  ###############################################
-def plot_solid_earth_tides_point(dt_out, tide_e, tide_n, tide_u, lalo=None):
+def plot_solid_earth_tides_point(dt_out, tide_e, tide_n, tide_u, lalo=None,
+                                 out_fig=None, save=False, display=True):
     """Plot the solid Earth tides at one point."""
     # plot
-    fig, axs = plt.subplots(nrows=3, ncols=1, figsize=[12, 6], sharex=True)
+    fig, axs = plt.subplots(nrows=3, ncols=1, figsize=[6, 4], sharex=True)
     for ax, data, label in zip(axs.flatten(),
                                [tide_e, tide_n, tide_u],
                                ['East [cm]', 'North [cm]', 'Up [cm]']):
@@ -222,7 +223,22 @@ def plot_solid_earth_tides_point(dt_out, tide_e, tide_n, tide_u, lalo=None):
         axs[0].set_title('solid Earth tides at (N{}, E{})'.format(lalo[0], lalo[1]), fontsize=12)
     fig.tight_layout()
 
-    plt.show()
+    # output
+    if out_fig:
+        save = True
+
+    if save:
+        if not out_fig:
+            out_fig = os.path.abspath('SET_point.png')
+        print('save figure to {}'.format(out_fig))
+        fig.savefig(out_fig, bbox_inches='tight', transparent=True, dpi=300)
+
+    if display:
+        print('showing...')
+        plt.show()
+    else:
+        plt.close()
+
     return
 
 
@@ -286,4 +302,3 @@ def add_tidal_constituents(ax, period, psd, min_psd=1500, verbose=False):
                     print('tide: speices={}, symbol={}, period={} hours, psd={} m^2/Hz'.format(
                         tide.species, tide.symbol, tide.period, tide_psd))
     return
-
