@@ -7,6 +7,10 @@
 # conda create --name test --yes
 # conda activate test
 
+# exit the shell if a simple command exits with a non-zero exit value.
+# A simple command is any command not part of an if, while or until test.
+set -e
+
 # make sure to use test env for this purpose to avoid mess up other envs
 while true; do
     read -p "Have you run 'conda activate test' yet? [y/n]: " yn
@@ -31,12 +35,15 @@ for version in "3.6" "3.7" "3.8" "3.9"; do
 
     # install dependencies
     echo "install dependencies with python="$version
-    conda install python=$version numpy $gfortran --channel conda-forge --force-reinstall --yes
+    conda install python=$version numpy scikit-image matplotlib $gfortran --channel conda-forge --force-reinstall --yes
     
     # compile solid.for
     cd ~/tools/PySolid/pysolid
     f2py -c -m solid solid.for
     echo "finished for python="$version
+
+    # test
+    ~/tools/PySolid/test/test.py
 
     if [[ $version == "3.8"  ]]; then
         echo "remove the installed dependencies before the loop of 3.9"
@@ -45,4 +52,5 @@ for version in "3.6" "3.7" "3.8" "3.9"; do
 
 done
 
+echo "PASS ALL compiling/testing in $OSTYPE."
 

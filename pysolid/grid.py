@@ -97,7 +97,7 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
                     usecols=(2,3,4),
                     delimiter=',',
                     skiprows=0,
-                    max_rows=length*width)
+                    max_rows=int(length*width))
     tide_e = fc[:, 0].reshape(length, width)
     tide_n = fc[:, 1].reshape(length, width)
     tide_u = fc[:, 2].reshape(length, width)
