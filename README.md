@@ -11,19 +11,20 @@ This is research code provided to you "as is" with NO WARRANTIES OF CORRECTNESS.
 
 ### 1. Install
 
-PySolid requires compilation of its underlying Fortran code.
+PySolid relies on a few Python modules as described in [requirements.txt](./requirements.txt) and compilation of the Fortran code.
 
 #### a. Use `pip` to install the pre-compiled version
 
-Run the following to install the pre-compiled version. This works for macOS/Linux only. To update to the latest development version, use `pip install --upgrade`.
+We maintain a few pre-compiled version of the Fortran code, so that one could install PySolid via pip as below, without the fortran compiler and manual compilation. However, this works for recent numpy versions on macOS and Linux only.
 
 ```bash
+# use "pip install --upgrade" to update to the latest version
 pip install git+https://github.com/insarlab/PySolid.git
 ```
 
 #### b. Use `conda` to compile from source
 
-Or you could download the source code and compile it yourself. Below is an example using conda.
+Below is example of using conda to compile from source:
 
 ```bash
 # download source code
@@ -31,38 +32,38 @@ cd ~/tools
 git clone https://github.com/insarlab/PySolid.git
 
 # install dependencies via conda
-conda config --add channels conda-forge
-conda install --file PySolid/requirements.txt
+conda install -c conda-forge --file PySolid/requirements.txt
 
-# compile Fortran code into a Python interface using f2py to generate:
+# compile the Fortran code into a Python interface using f2py to generate the C extension files, e.g.:
 # solid.cpython-37m-darwin.so           for macOS
 # solid.cpython-37m-x86_64-linux-gnu.so for Linux
 cd ~/tools/PySolid/pysolid
 f2py -c -m solid solid.for
 ```
 
-Set the following environment variables in your source file (e.g. **_~/.bash_profile_** for _bash_ users or **_~/.cshrc_** for _csh/tcsh_ users).
+Set the following environment variable (e.g. in **_~/.bash_profile_** for _bash_ users or **_~/.cshrc_** for _csh/tcsh_ users). 
 
 ```bash
 export PYTHONPATH=${PYTHONPATH}:~/tools/PySolid
 ```
 
-#### Test the installation
+#### Test
 
-Run the following to test the installation:
+To test the installation, run the following:
 
 ```bash
 python -c "import pysolid; print(pysolid.__version__)"
+~/tools/PySolid/test/test.py
 ```
 
-### 2. Example usage
+### 2. Example Usage
 
 PySolid could compute solid Earth tides in two modes: **point** and **grid**. Both modes produce displacement in east, north and up direction.
 
 +   **Point mode:** compute 1D tides time-series at a specific point for a given time period
 +   **Grid mode:** compute 2D tides grid at a specific time for a given spatial grid
 
-#### 2.1 Point mode [[nbviewer](https://nbviewer.jupyter.org/github/insarlab/PySolid/blob/main/docs/plot_point_SET.ipynb)]
+#### 2.1 Point Mode [[nbviewer](https://nbviewer.jupyter.org/github/insarlab/PySolid/blob/main/docs/plot_point_SET.ipynb)]
 
 ```python
 import datetime as dt
@@ -92,7 +93,7 @@ pysolid.plot_power_spectral_density4tides(tide_u, sample_spacing=step_sec)
   <img width="600" src="https://yunjunzhang.files.wordpress.com/2021/01/set_psd-1.png">
 </p>
 
-#### 2.2 Grid mode [[nbviewer](https://nbviewer.jupyter.org/github/insarlab/PySolid/blob/main/docs/plot_grid_SET.ipynb)]
+#### 2.2 Grid Mode [[nbviewer](https://nbviewer.jupyter.org/github/insarlab/PySolid/blob/main/docs/plot_grid_SET.ipynb)]
 
 ```python
 import datetime as dt

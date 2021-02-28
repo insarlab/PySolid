@@ -4,7 +4,12 @@
 
 
 import os
+import sys
 import datetime as dt
+
+# setup path for the package
+pysolid_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(pysolid_path)
 import pysolid
 
 
@@ -23,7 +28,7 @@ dt_obj1 = dt.datetime(2020, 12, 31, 2, 0, 0)
  tide_u) = pysolid.calc_solid_earth_tides_point(lat, lon, dt_obj0, dt_obj1, verbose=False)
 
 # plot
-out_fig1 = os.path.abspath('test_SET_point.png')
+out_fig1 = os.path.join(os.path.dirname(__file__), 'test_SET_point.png')
 pysolid.plot_solid_earth_tides_point(dt_out, tide_e, tide_n, tide_u, lalo=[lat, lon],
                                      out_fig=out_fig1, display=False)
 
@@ -48,12 +53,15 @@ atr = {
  tide_u) = pysolid.calc_solid_earth_tides_grid(dt_obj, atr, verbose=True)
 
 # plot
-out_fig2 = os.path.abspath('test_SET_grid.png')
+out_fig2 = os.path.join(os.path.dirname(__file__), 'test_SET_grid.png')
 pysolid.plot_solid_earth_tides_grid(tide_e, tide_n, tide_u, dt_obj,
                                     out_fig=out_fig2, display=False)
 
 
 ## open the plotted figures
-os.system('open {}'.format(out_fig1))
-os.system('open {}'.format(out_fig2))
+cmd = 'open'
+if sys.platform in ['linux']:
+    cmd = 'display'
+os.system('{} {}'.format(cmd, out_fig1))
+os.system('{} {}'.format(cmd, out_fig2))
 

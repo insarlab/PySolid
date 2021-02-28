@@ -1,0 +1,5 @@
+numpy<1.19
+scipy
+matplotlib
+scikit-image
+fortran-compiler    #A generic way to obtain the Fortran compiler through conda-forge channel
