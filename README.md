@@ -5,7 +5,7 @@
 
 ## PySolid
 
-The Python based solid Earth tides (PySolid) is a thin Python wrapper of the [`solid.for`](http://geodesyworld.github.io/SOFTS/solid.htm) program (by Dennis Milbert based on [_dehanttideinelMJD.f_](https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel/) from V. Dehant, S. Mathews, J. Gipson and C. Bruyninx) to calculate [solid Earth tides](https://en.wikipedia.org/wiki/Earth_tide) in east/north/up direction (section 7.1.2 in the [2003 IERS Conventions](https://www.iers.org/IERS/EN/Publications/TechnicalNotes/tn32.html)). Solid Earth tides introduces very long spatial wavelength range components in SAR/InSAR observations, as shown in the Sentinel-1 data with regular acquisitions and large swaths (Fattahi et al., 2020).
+The Python based solid Earth tides (PySolid) is a thin Python wrapper of the [`solid.for`](http://geodesyworld.github.io/SOFTS/solid.htm) program (by Dennis Milbert based on [_dehanttideinelMJD.f_](https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel/) from V. Dehant, S. Mathews, J. Gipson and C. Bruyninx) to calculate [solid Earth tides](https://en.wikipedia.org/wiki/Earth_tide) in east/north/up direction (section 7.1.1 in the [2010 IERS Conventions](https://www.iers.org/IERS/EN/Publications/TechnicalNotes/tn36.html)). Solid Earth tides introduces very long spatial wavelength range components in SAR/InSAR observations, as shown in the Sentinel-1 data with regular acquisitions and large swaths (Fattahi et al., 2020).
 
 This is research code provided to you "as is" with NO WARRANTIES OF CORRECTNESS. Use at your own risk.
 
@@ -132,7 +132,6 @@ tide_los = (  tide_e * np.sin(inc_angle) * np.cos(head_angle) * -1
 
 ### 3. References
 
-+   Milbert, D., Solid Earth Tide, http://geodesyworld.github.io/SOFTS/solid.htm, Accessd 2020 September 6.
-+   Fattahi, H., Z. Yunjun, X. Pi, P. S. Agram, P. Rosen, and Y. Aoki (2020), Absolute geolocation of SAR Big-Data: The first step for operational InSAR time-series analysis, _AGU Fall Meeting 2020_, 1-17 Dec 2020.
-+   McCarthy, D. D., and G. Petit (2004), [IERS conventions (2003) (IERS Technical Note No. 32)](https://www.iers.org/IERS/EN/Publications/TechnicalNotes/tn32.html), 127 pp, _International Earth Rotation And Reference Systems Service (IERS)_, Frankfurt, Germany.
-+   Petit, G., and B. Luzum (2010), [IERS Conventions (2010) (IERS Technical Note No. 36)](https://iers-conventions.obspm.fr/conventions_material.php) 179 pp., _International Earth Rotation And Reference Systems Service (IERS)_, Frankfurt, Germany. [[Code](https://iers-conventions.obspm.fr/chapter7.php)].
++   Milbert, D. (2018), solid: Solid Earth Tide, Available: http://geodesyworld.github.io/SOFTS/solid.htm, Accessd on: 2020-09-06.
++   Fattahi, H., Yunjun, Z., Pi, X., Agram, P.S., Rosen, P., and Aoki, Y. (2020), Absolute geolocation of SAR Big-Data: The first step for operational InSAR time-series analysis, _AGU Fall Meeting 2020_, 1-17 Dec 2020.
++   Petit, G., and Luzum, B. (2010), [IERS Conventions (2010) (IERS Technical Note No. 36)](https://iers-conventions.obspm.fr/conventions_material.php) 179 pp., _International Earth Rotation And Reference Systems Service (IERS)_, Frankfurt, Germany. [[Code](https://iers-conventions.obspm.fr/chapter7.php)].
