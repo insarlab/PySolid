@@ -297,7 +297,7 @@ def add_tidal_constituents(ax, period, psd, min_psd=1500, verbose=False):
             if tide_psd >= min_psd:
                 ymax = tide_psd / ax.get_ylim()[1]
                 ax.axvline(x=tide.period, ymax=ymax, color='k', ls='--', lw=1)
-                ax.annotate(tide.symbol, xy=(tide.period, tide_psd))
+                ax.annotate(tide.symbol, xy=(tide.period, tide_psd), xytext=(6, 4), textcoords='offset points')
                 if verbose:
                     print('tide: speices={}, symbol={}, period={} hours, psd={} m^2/Hz'.format(
                         tide.species, tide.symbol, tide.period, tide_psd))
