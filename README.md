@@ -53,7 +53,8 @@ To test the installation, run the following:
 
 ```bash
 python -c "import pysolid; print(pysolid.__version__)"
-~/tools/PySolid/test/test.py
+python ~/tools/PySolid/tests/test_SET_grid.py
+python ~/tools/PySolid/tests/test_SET_point.py
 ```
 
 ### 2. Example Usage
