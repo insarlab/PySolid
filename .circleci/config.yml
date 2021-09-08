@@ -1,0 +1,65 @@
+version: 2.1
+
+orbs:
+  # The python orb contains a set of prepackaged CircleCI configuration you can use repeatedly in your configuration files
+  # Orb commands and jobs help you with common scripting around a language/tool
+  # so you dont have to copy and paste it everywhere.
+  # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
+  python: circleci/python@1.2
+
+workflows:
+  build-and-test:  # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run. 
+    # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows 
+    jobs:
+      - build-and-test
+
+
+jobs:
+  build-and-test:  # This is the name of the job, feel free to change it to better match what you're trying to do!
+    # These next lines defines a Docker executors: https://circleci.com/docs/2.0/executor-types/
+    # You can specify an image from Dockerhub or use one of the convenience images from CircleCI's Developer Hub
+    # A list of available CircleCI Docker convenience images are available here: https://circleci.com/developer/images/image/cimg/python
+    # The executor is the environment in which the steps below will be executed - below will use a python 3.9 container
+    # Change the version below to your required version of python
+    docker:
+      - image: ubuntu:bionic
+        environment:
+          CONDA_PREFIX: /root/tools/miniconda3
+        user: root
+    working_directory: /root/tools/PySolid
+    # Checkout the code as the first step. This is a dedicated CircleCI step.
+    steps:
+      - checkout
+      - run:
+          name: Setting Environment with Miniconda
+          command: |
+            apt update
+            apt-get update --yes && apt-get upgrade --yes
+            # download and install miniconda3
+            mkdir -p ${HOME}/tools
+            cd ${HOME}/tools
+            wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+            bash Miniconda3-latest-Linux-x86_64.sh -b -p ${HOME}/tools/miniconda3
+            ${HOME}/tools/miniconda3/bin/conda init bash
+            ${HOME}/tools/miniconda3/bin/conda config --add channels conda-forge
+            ${HOME}/tools/miniconda3/bin/conda install -c conda-forge --yes mamba
+      - run:
+          name: Installing PySolid
+          no_output_timeout: 10m
+          command: |
+            export PYTHONUNBUFFERED=1
+            # setup environment variable
+            export PYTHONPATH=${PYTHONPATH}:${HOME}/tools/PySolid
+            # install dependencies
+            source activate root
+            mamba install --verbose --yes --file ${HOME}/tools/PySolid/requirements.txt
+            # compile Fortran code
+            cd ${HOME}/tools/PySolid/pysolid
+            f2py -c -m solid solid.for
+      - run:
+          name: Test
+          command: |
+            export PYTHONPATH=${PYTHONPATH}:${HOME}/tools/PySolid
+            python ${HOME}/tools/PySolid/tests/test_SET_point.py
+            python ${HOME}/tools/PySolid/tests/test_SET_grid.py
