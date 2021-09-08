@@ -33,10 +33,12 @@ pysolid.plot_solid_earth_tides_point(dt_out, tide_e, tide_n, tide_u, lalo=[lat, 
                                      out_fig=out_fig, display=False)
 
 ## open the plotted figures
-if sys.platform == 'win32':
+if sys.platform in ['linux']:
+    os.system('display {}'.format(out_fig))
+elif sys.platform in ['darwin']:
+    os.system('open {}'.format(out_fig))
+elif sys.platform.startswith('win'):
     os.system(out_fig)
 else:
-    cmd = 'open'
-    if sys.platform in ['linux']:
-        cmd = 'display'
-    os.system('{} {}'.format(cmd, out_fig))
+    print('Unknown OS system. Check results in file: {}'.format(out_fig))
+
