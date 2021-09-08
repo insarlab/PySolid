@@ -52,6 +52,7 @@ jobs:
             export PYTHONUNBUFFERED=1
             # setup environment variable
             export PYTHONPATH=${PYTHONPATH}:${HOME}/tools/PySolid
+            export PATH=${CONDA_PREFIX}/bin:${PATH}
             # install dependencies
             source activate root
             mamba install --verbose --yes --file ${HOME}/tools/PySolid/requirements.txt
@@ -61,6 +62,9 @@ jobs:
       - run:
           name: Test
           command: |
+            # setup environment variables
             export PYTHONPATH=${PYTHONPATH}:${HOME}/tools/PySolid
+            export PATH=${CONDA_PREFIX}/bin:${PATH}
+            # run tests
             python ${HOME}/tools/PySolid/tests/test_SET_point.py
             python ${HOME}/tools/PySolid/tests/test_SET_grid.py
