@@ -39,10 +39,11 @@ pysolid.plot_solid_earth_tides_grid(tide_e, tide_n, tide_u, dt_obj,
 
 
 ## open the plotted figures
-if sys.platform == 'win32':
+if sys.platform.startswith('win'):
     os.system(out_fig)
+elif sys.platform in ['linux']:
+    os.system('display {}'.format(out_fig))
+elif sys.platform in ['darwin']:
+    os.system('open {}'.format(out_fig))
 else:
-    cmd = 'open'
-    if sys.platform in ['linux']:
-        cmd = 'display'
-    os.system('{} {}'.format(cmd, out_fig))
+    print('Unknown OS system. Check results in file: {}'.format(out_fig))
