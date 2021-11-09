@@ -21,7 +21,6 @@ conda install -c conda-forge pysolid
 
 We use the [Numpy's f2py](https://numpy.org/doc/stable/f2py/) to build the fortran sources, so you must have a fortran compiler and numpy installed on your system before installing PySolid.
 
-
 #### a. Use `conda` to compile from source
 
 All the necessary dependencies are available via conda, including the fortran compiler. Run:
