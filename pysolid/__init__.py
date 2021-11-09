@@ -1,6 +1,6 @@
-from .grid import *
-from .point import *
+from pysolid.grid import *
+from pysolid.point import *
 
 # get version info
-from .version import *
+from pysolid.version import *
 __version__ = release_version

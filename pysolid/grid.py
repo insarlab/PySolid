@@ -17,7 +17,7 @@ import datetime as dt
 from skimage.transform import resize
 
 try:
-    from .solid import solid_grid
+    from pysolid.solid import solid_grid
 except ImportError:
     msg = "Cannot import name 'solid' from 'pysolid'!"
     msg += '\n    Maybe solid.for is NOT compiled yet.'

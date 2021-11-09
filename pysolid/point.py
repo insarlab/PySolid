@@ -19,7 +19,7 @@ from scipy import signal
 from matplotlib import pyplot as plt, ticker, dates as mdates
 
 try:
-    from .solid import solid_point
+    from pysolid.solid import solid_point
 except ImportError:
     msg = "Cannot import name 'solid' from 'pysolid'!"
     msg += '\n    Maybe solid.for is NOT compiled yet.'
