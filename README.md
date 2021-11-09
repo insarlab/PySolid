@@ -11,40 +11,45 @@ This is research code provided to you "as is" with NO WARRANTIES OF CORRECTNESS.
 
 ### 1. Install
 
-PySolid relies on a few Python modules as described in [requirements.txt](./requirements.txt) and compilation of the Fortran code.
+PySolid is available on conda-forge and PyPI. Because PySolid contains fortran sources, which are built using [Numpy's f2py](https://numpy.org/doc/stable/f2py/), we recommend installing via conda. Otherwise, you may build it from source.
 
-#### a. Use `pip` to install the pre-compiled version
-
-We maintain a few pre-compiled version of the Fortran code, so that one could install PySolid via pip as below, without the fortran compiler and manual compilation. However, this works for recent numpy versions on macOS and Linux only.
-
-```bash
-# use "pip install --upgrade" to update to the latest version
-pip install git+https://github.com/insarlab/PySolid.git
+```shell
+conda install -c conda-forge pysolid
 ```
 
-#### b. Use `conda` to compile from source
+### 2. Build from source
 
-Below is example of using conda to compile from source:
+We use the [Numpy's f2py](https://numpy.org/doc/stable/f2py/) to build the fortran sources, so you must have a fortran compiler and numpy installed on your system before installing PySolid.
+
+
+#### a. Use `conda` to compile from source
+
+All the necessary dependencies are available via conda, including the fortran compiler. Run:
 
 ```bash
-# download source code
-cd ~/tools
 git clone https://github.com/insarlab/PySolid.git
 
-# install dependencies via conda
-conda install -c conda-forge --file PySolid/requirements.txt
+# create a conda environment for PySolid
+conda env create -f PySolid/environment.yml
+# OR, install dependencies into an existing environment
+conda install -c conda-forge fortran-compiler --file PySolid/requirements.txt
 
-# compile the Fortran code into a Python interface using f2py to generate the C extension files, e.g.:
-# solid.cpython-37m-darwin.so           for macOS
-# solid.cpython-37m-x86_64-linux-gnu.so for Linux
-cd ~/tools/PySolid/pysolid
-f2py -c -m solid solid.for
+# Add "--upgrade" to update to the latest version
+python -m pip install ./PySolid
+
 ```
 
-Set the following environment variable (e.g. in **_~/.bash_profile_** for _bash_ users or **_~/.cshrc_** for _csh/tcsh_ users). 
+#### b. Use `pip` to compile from source
+
+Once you have a fortran compiler installed, you can run:
 
 ```bash
-export PYTHONPATH=${PYTHONPATH}:~/tools/PySolid
+git clone https://github.com/insarlab/PySolid.git
+
+python -m pip install -r PySolid/requirements.txt
+
+# Add "--upgrade" to update to the latest version
+python -m pip install ./PySolid
 ```
 
 #### Test
@@ -53,8 +58,8 @@ To test the installation, run the following:
 
 ```bash
 python -c "import pysolid; print(pysolid.__version__)"
-python ~/tools/PySolid/tests/test_SET_grid.py
-python ~/tools/PySolid/tests/test_SET_point.py
+python PySolid/tests/test_SET_grid.py
+python PySolid/tests/test_SET_point.py
 ```
 
 ### 2. Example Usage
