@@ -30,7 +30,8 @@ git clone https://github.com/insarlab/PySolid.git
 
 # create a conda environment for PySolid
 conda env create -f PySolid/environment.yml
-# OR, install dependencies into an existing environment
+conda activate pysolid
+# OR, install dependencies into an existing, activated environment
 conda install -c conda-forge fortran-compiler --file PySolid/requirements.txt
 
 # Add "--upgrade" to update to the latest version
