@@ -165,6 +165,7 @@
         write(*,'(a)') 'Mild Warning -- time crossed leap second table'
         write(*,'(a)') '  boundaries.  Boundary edge value used instead'
       endif
+      close(lout)
 
       go to 99
    98 write(*,'(a)') 'Check arguments.'
@@ -307,6 +308,7 @@
         write(*,'(a)') 'Mild Warning -- time crossed leap second table'
         write(*,'(a)') '  boundaries.  Boundary edge value used instead'
       endif
+      close(lout)
 
       go to 99
    98 write(*,'(a)') 'Check arguments.'
