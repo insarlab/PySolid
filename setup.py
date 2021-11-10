@@ -3,11 +3,15 @@
 
 
 # always prefer setuptools over distutils
-from setuptools import setup, find_packages
+import setuptools
+from numpy.distutils.core import setup, Extension
+
+# specify fortran extensions to build with numpy.f2py
+solid_ext = Extension(name='pysolid.solid', sources=['pysolid/solid.for'])
 
 setup(
     name='pysolid',
-    version='0.1.2',
+    version='0.2.0',
     description="A Python wrapper for solid to compute solid Earth tides",
     url="https://github.com/insarlab/PySolid",
     author="Zhang Yunjun, Dennis Milbert",
@@ -29,7 +33,10 @@ setup(
     keywords="solid Eartth tides, deformation, geodesy, geophysics",
 
     # package discovery
-    packages=find_packages(),
+    packages=setuptools.find_packages(),
+
+    # build fortran deps with numpy.f2py
+    ext_modules=[solid_ext],
 
     # dependencies
     python_requires=">=3.6",

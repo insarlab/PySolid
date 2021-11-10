@@ -1,5 +1,5 @@
 [![Language](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-v0.1.2-green.svg)](https://github.com/insarlab/PySolid/releases)
+[![Version](https://img.shields.io/badge/version-v0.2.0-green.svg)](https://github.com/insarlab/PySolid/releases)
 [![License](https://img.shields.io/badge/license-GPLv3-yellow.svg)](https://github.com/insarlab/PySolid/blob/main/LICENSE)
 [![render](https://img.shields.io/badge/render-nbviewer-orange.svg)](https://nbviewer.jupyter.org/github/insarlab/PySolid/tree/main/docs)
 
@@ -11,50 +11,46 @@ This is research code provided to you "as is" with NO WARRANTIES OF CORRECTNESS.
 
 ### 1. Install
 
-PySolid relies on a few Python modules as described in [requirements.txt](./requirements.txt) and compilation of the Fortran code.
+PySolid is available on the `conda-forge` channel and can be installed as below:
 
-#### a. Use `pip` to install the pre-compiled version
-
-We maintain a few pre-compiled version of the Fortran code, so that one could install PySolid via pip as below, without the fortran compiler and manual compilation. However, this works for recent numpy versions on macOS and Linux only.
-
-```bash
-# use "pip install --upgrade" to update to the latest version
-pip install git+https://github.com/insarlab/PySolid.git
+```shell
+conda install -c conda-forge pysolid
 ```
 
-#### b. Use `conda` to compile from source
+Installing from `conda-forge` channel is recomended because PySolid contains Fortran source code, which required compilcation. Otherwise, you may build it from source as described below.
 
-Below is example of using conda to compile from source:
+#### 1.1 Build from source
+
+PySolid relies on a few Python modules as described in [requirements.txt](./requirements.txt) and [NumPy's f2py](https://numpy.org/doc/stable/f2py/) to build the Fortran source code. You could use `conda` to install all the dependencies, including the Fortran compiler, or use your own installed Fortran compiler and `pip` to install the rest.
 
 ```bash
-# download source code
-cd ~/tools
+## download the source code
 git clone https://github.com/insarlab/PySolid.git
 
-# install dependencies via conda
-conda install -c conda-forge --file PySolid/requirements.txt
+## install dependencies
+# option 1: use conda to install dependencies into an existing, activated environment
+conda install -c conda-forge fortran-compiler --file PySolid/requirements.txt
 
-# compile the Fortran code into a Python interface using f2py to generate the C extension files, e.g.:
-# solid.cpython-37m-darwin.so           for macOS
-# solid.cpython-37m-x86_64-linux-gnu.so for Linux
-cd ~/tools/PySolid/pysolid
-f2py -c -m solid solid.for
+# option 2: use conda to create a new environment named "pysolid"
+conda env create -f PySolid/environment.yml
+conda activate pysolid
+
+# option 3: use pip to install the rest dependencies, once you have a fortran compiler installed
+python -m pip install -r PySolid/requirements.txt
+
+## install PySolid
+# Add "--upgrade" to update to the latest version
+python -m pip install ./PySolid
 ```
 
-Set the following environment variable (e.g. in **_~/.bash_profile_** for _bash_ users or **_~/.cshrc_** for _csh/tcsh_ users). 
-
-```bash
-export PYTHONPATH=${PYTHONPATH}:~/tools/PySolid
-```
-
-#### Test
+#### 1.2 Test the installation
 
 To test the installation, run the following:
 
 ```bash
 python -c "import pysolid; print(pysolid.__version__)"
-python ~/tools/PySolid/tests/test_SET_grid.py
-python ~/tools/PySolid/tests/test_SET_point.py
+python PySolid/tests/test_SET_grid.py
+python PySolid/tests/test_SET_point.py
 ```
 
 ### 2. Example Usage

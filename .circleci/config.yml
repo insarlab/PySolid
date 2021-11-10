@@ -9,8 +9,8 @@ orbs:
 
 workflows:
   build-and-test:  # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run. 
-    # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows 
+    # Inside the workflow, you define the jobs you want to run.
+    # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
     jobs:
       - build-and-test
 
@@ -51,19 +51,16 @@ jobs:
           command: |
             export PYTHONUNBUFFERED=1
             # setup environment variable
-            export PYTHONPATH=${PYTHONPATH}:${HOME}/tools/PySolid
             export PATH=${CONDA_PREFIX}/bin:${PATH}
             # install dependencies
             source activate root
-            mamba install --verbose --yes --file ${HOME}/tools/PySolid/requirements.txt
-            # compile Fortran code
-            cd ${HOME}/tools/PySolid/pysolid
-            f2py -c -m solid solid.for
+            mamba install --verbose --yes  fortran-compiler --file ${HOME}/tools/PySolid/requirements.txt
+            python -m pip install ${HOME}/tools/PySolid
+
       - run:
           name: Test
           command: |
             # setup environment variables
-            export PYTHONPATH=${PYTHONPATH}:${HOME}/tools/PySolid
             export PATH=${CONDA_PREFIX}/bin:${PATH}
             # run tests
             python ${HOME}/tools/PySolid/tests/test_SET_point.py
