@@ -7,7 +7,7 @@ import setuptools
 from numpy.distutils.core import setup, Extension
 
 # specify fortran extensions to build with numpy.f2py
-solid_ext = Extension(name='pysolid.solid', sources=['pysolid/solid.for'])
+solid_ext = Extension(name='pysolid.solid', sources=['src/pysolid/solid.for'])
 
 setup(
     name='pysolid',
@@ -33,7 +33,8 @@ setup(
     keywords="solid Eartth tides, deformation, geodesy, geophysics",
 
     # package discovery
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages("src"),  # include all packages under src
+    package_dir={"": "src"},                   # tell distutils packages are under src
 
     # build fortran deps with numpy.f2py
     ext_modules=[solid_ext],
@@ -50,10 +51,7 @@ setup(
     # data files
     include_package_data=True,
     package_data={
-        "pysolid": [
-            "solid.for",
-            "solid.cpython*.so",
-        ],
+        "pysolid": ["solid.for"],
     },
 
     project_urls={
