@@ -7,9 +7,10 @@ import os
 import sys
 import datetime as dt
 
-# setup path for the package
-pysolid_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(pysolid_path)
+## setup path for the package
+#from pathlib import Path
+#pysolid_path = Path(__file__).absolute().parent.parent.joinpath('src')
+#sys.path.append(pysolid_path)
 import pysolid
 
 
