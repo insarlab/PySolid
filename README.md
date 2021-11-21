@@ -1,6 +1,6 @@
 [![Language](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/)
 [![CircleCI](https://img.shields.io/circleci/build/github/insarlab/PySolid.svg?logo=circleci&label=test)](https://circleci.com/gh/insarlab/PySolid)
-[![Version](https://img.shields.io/badge/version-v0.2.0-green.svg)](https://github.com/insarlab/PySolid/releases)
+[![Version](https://img.shields.io/github/v/release/insarlab/PySolid?color=green)](https://github.com/insarlab/PySolid/releases)
 [![License](https://img.shields.io/badge/license-GPLv3-yellow.svg)](https://github.com/insarlab/PySolid/blob/main/LICENSE)
 [![render](https://img.shields.io/badge/render-nbviewer-orange.svg)](https://nbviewer.jupyter.org/github/insarlab/PySolid/tree/main/docs)
 
@@ -15,6 +15,7 @@ This is research code provided to you "as is" with NO WARRANTIES OF CORRECTNESS.
 PySolid is available on the `conda-forge` channel and can be installed as below:
 
 ```shell
+# run "conda update pysolid" to update the installed version
 conda install -c conda-forge pysolid
 ```
 
@@ -24,11 +25,16 @@ Installing from `conda-forge` channel is recomended because PySolid contains For
 
 PySolid relies on a few Python modules as described in [requirements.txt](./requirements.txt) and [NumPy's f2py](https://numpy.org/doc/stable/f2py/) to build the Fortran source code. You could use `conda` to install all the dependencies, including the Fortran compiler, or use your own installed Fortran compiler and `pip` to install the rest.
 
-```bash
-## download the source code
-git clone https://github.com/insarlab/PySolid.git
+##### a. Download source code
 
-## install dependencies
+```bash
+# run "cd PySolid; git pull" to update to the latest development version
+git clone https://github.com/insarlab/PySolid.git
+```
+
+##### b. Install dependencies
+
+```bash
 # option 1: use conda to install dependencies into an existing, activated environment
 conda install -c conda-forge fortran-compiler --file PySolid/requirements.txt
 
@@ -36,12 +42,21 @@ conda install -c conda-forge fortran-compiler --file PySolid/requirements.txt
 conda env create -f PySolid/environment.yml
 conda activate pysolid
 
-# option 3: use pip to install the rest dependencies, once you have a fortran compiler installed
+# option 3: have a Fortran compiler already installed and use pip to install the rest dependencies
 python -m pip install -r PySolid/requirements.txt
+```
 
-## install PySolid
-# Add "--upgrade" to update to the latest version
-python -m pip install ./PySolid
+##### c. Install PySolid
+
+```bash
+# option 1: use pip to install pysolid into the current environment
+# use "pip install -e" to install in the development mode
+python -m pip install PySolid
+
+# option 2: manual compile the Fortran code and setup environment variable
+cd PySolid/src/pysolid
+f2py -c -m solid solid.for
+export PYTHONPATH=${PYTHONPATH}:~/tools/PySolid
 ```
 
 #### 1.2 Test the installation

@@ -6,12 +6,18 @@
 import setuptools
 from numpy.distutils.core import setup, Extension
 
+# Grab from version.py file: version
+with open("src/pysolid/version.py", "r") as f:
+    lines = f.readlines()
+    line = [line for line in lines if line.strip().startswith("Tag(")][0].strip()
+    version = line.replace("'",'"').split('"')[1]
+
 # specify fortran extensions to build with numpy.f2py
 solid_ext = Extension(name='pysolid.solid', sources=['src/pysolid/solid.for'])
 
 setup(
     name='pysolid',
-    version='0.2.0',
+    version=version,
     description="A Python wrapper for solid to compute solid Earth tides",
     url="https://github.com/insarlab/PySolid",
     author="Zhang Yunjun, Dennis Milbert",
