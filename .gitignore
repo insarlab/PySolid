@@ -1,5 +1,5 @@
 *.DS_Store
-test_*.png
+tests/*.png
 solid.txt
 
 # Byte-compiled / optimized / DLL files

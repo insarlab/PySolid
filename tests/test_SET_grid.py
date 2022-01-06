@@ -34,7 +34,7 @@ atr = {
  tide_u) = pysolid.calc_solid_earth_tides_grid(dt_obj, atr, verbose=True)
 
 # plot
-out_fig = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test_SET_grid.png'))
+out_fig = os.path.abspath(os.path.join(os.path.dirname(__file__), 'SET_grid.png'))
 pysolid.plot_solid_earth_tides_grid(tide_e, tide_n, tide_u, dt_obj,
                                     out_fig=out_fig, display=False)
 

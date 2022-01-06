@@ -29,7 +29,7 @@ dt_obj1 = dt.datetime(2020, 12, 31, 2, 0, 0)
  tide_u) = pysolid.calc_solid_earth_tides_point(lat, lon, dt_obj0, dt_obj1, verbose=False)
 
 # plot
-out_fig = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test_SET_point.png'))
+out_fig = os.path.abspath(os.path.join(os.path.dirname(__file__), 'SET_point.png'))
 pysolid.plot_solid_earth_tides_point(dt_out, tide_e, tide_n, tide_u, lalo=[lat, lon],
                                      out_fig=out_fig, display=False)
 
