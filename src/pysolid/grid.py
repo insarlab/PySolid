@@ -49,6 +49,7 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
     Examples:   atr = readfile.read_attribute('geo_velocity.h5')
                 tide_e, tide_n, tide_u = calc_solid_earth_tides_grid('20180219', atr)
     """
+    vprint = print if verbose else lambda *args, **kwargs: None
 
     # location
     lat0 = float(atr['Y_FIRST'])
@@ -56,10 +57,9 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
     lat1 = lat0 + float(atr['Y_STEP']) * int(atr['LENGTH'])
     lon1 = lon0 + float(atr['X_STEP']) * int(atr['WIDTH'])
 
-    if verbose:
-        print('PYSOLID: ----------------------------------------')
-        print('PYSOLID: datetime: {}'.format(dt_obj.isoformat()))
-        print('PYSOLID: SNWE: {}'.format((lat1, lat0, lon0, lon1)))
+    vprint('PYSOLID: ----------------------------------------')
+    vprint('PYSOLID: datetime: {}'.format(dt_obj.isoformat()))
+    vprint('PYSOLID: SNWE: {}'.format((lat1, lat0, lon0, lon1)))
 
     # step size
     num_step = int(step_size / 108e3 / abs(float(atr['Y_STEP'])))
@@ -68,19 +68,16 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
     width  = np.rint(int(atr['WIDTH'])  / num_step - 1e-4).astype(int)
     lat_step = float(atr['Y_STEP']) * num_step
     lon_step = float(atr['X_STEP']) * num_step
-    if verbose:
-        print('SOLID  : calculate solid Earth tides in east/north/up direction')
-        print('SOLID  : shape: {s}, step size: {la:.4f} by {lo:.4f} deg'.format(s=(length, width),
-                                                                                la=lat_step,
-                                                                                lo=lon_step))
+    vprint('SOLID  : calculate solid Earth tides in east/north/up direction')
+    vprint('SOLID  : shape: {s}, step size: {la:.4f} by {lo:.4f} deg'.format(
+        s=(length, width), la=lat_step, lo=lon_step))
 
     ## calc solid Earth tides and write to text file
     txt_file = os.path.abspath('solid.txt')
     if os.path.isfile(txt_file):
         os.remove(txt_file)
 
-    if verbose:
-        print('SOLID  : calculating / writing data to txt file: {}'.format(txt_file))
+    vprint('SOLID  : calculating / writing data to txt file: {}'.format(txt_file))
 
     # Run twice to circumvent fortran bug which cuts off last file in loop - Simran, Jun 2020
     for _ in range(2):
@@ -90,14 +87,14 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
                    lon0, lon_step, width-1)
 
     ## read data from text file
-    if verbose:
-        print('PYSOLID: read data from text file: {}'.format(txt_file))
+    vprint('PYSOLID: read data from text file: {}'.format(txt_file))
+    grid_size = int(length * width)
     fc = np.loadtxt(txt_file,
                     dtype=float,
                     usecols=(2,3,4),
                     delimiter=',',
                     skiprows=0,
-                    max_rows=int(length*width))
+                    max_rows=grid_size+100)[:grid_size]
     tide_e = fc[:, 0].reshape(length, width)
     tide_n = fc[:, 1].reshape(length, width)
     tide_u = fc[:, 2].reshape(length, width)
@@ -108,8 +105,7 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
     # resample to the input size
     if num_step > 1:
         out_shape = (int(atr['LENGTH']), int(atr['WIDTH']))
-        if verbose:
-            print('PYSOLID: resize data to the shape of {} using order-1 spline interpolation'.format(out_shape))
+        vprint('PYSOLID: resize data to the shape of {} using order-1 spline interpolation'.format(out_shape))
         kwargs = dict(order=1, mode='edge', anti_aliasing=True, preserve_range=True)
         tide_e = resize(tide_e, out_shape, **kwargs)
         tide_n = resize(tide_n, out_shape, **kwargs)
