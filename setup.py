@@ -20,8 +20,12 @@ setup(
     version=version,
     description="A Python wrapper for solid to compute solid Earth tides",
     url="https://github.com/insarlab/PySolid",
+
     author="Zhang Yunjun, Dennis Milbert",
     author_email="yunjunzgeo@gmail.com",
+
+    license='GPL-3.0-or-later',
+    license_files=('LICENSE',),
 
     classifiers=[
         "Development Status :: 4 - Beta",
