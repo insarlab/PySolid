@@ -28,53 +28,54 @@ except ImportError:
 
 
 ## Tidal constituents
-# https://en.wikipedia.org/wiki/Theory_of_tides#Tidal_constituents
+# https://en.wikipedia.org/wiki/Theory_of_tides#Tidal_constituents. Accessed on: 2022-03-07.
+# unit: period (hour), speed (deg per hour)
 Tag = collections.namedtuple('Tag', 'species symbol period speed doodson_num noaa_order')
 TIDES = (
     # Semi-diurnal
-    Tag('Principal lunar semidiurnal'              , r'$M_2$'      , 12.421, 28.984, 255.555, 1 ),
-    Tag('Principal solar semidiurnal'              , r'$S_2$'      , 12.000, 30.000, 273.555, 2 ),
-    Tag('Larger lunar elliptic semidiurnal'        , r'$N_2$'      , 12.658, 28.440, 245.655, 3 ),
-    Tag('Larger lunar evectional'                  , r'$v_2$'      , 12.626, 28.513, 247.455, 11),
-    Tag('Variational'                              , r'$\mu_2$'    , 12.872, 27.968, 237.555, 13),
-    Tag('Lunar elliptical semidiurnal second-order', '2"N'+r'$_2$' , 12.905, 27.895, 235.755, 14),
-    Tag('Smaller lunar evectional'                 , r'$\lambda_2$', 12.222, 29.456, 263.655, 16),
-    Tag('Larger solar elliptic'                    , r'$T_2$'      , 12.016, 29.959, 272.555, 27),
-    Tag('Smaller solar elliptic'                   , r'$R_2$'      , 11.984, 30.041, 274.555, 28),
-    Tag('Shallow water semidiurnal'                , r'$2SM_2$'    , 11.607, 31.016, 291.555, 31),
-    Tag('Smaller lunar elliptic semidiurnal'       , r'$L_2$'      , 12.192, 29.528, 265.455, 33),
-    Tag('Lunisolar semidiurnal'                    , r'$K_2$'      , 11.967, 30.082, 275.555, 35),
+    Tag('Principal lunar semidiurnal'              , r'$M_2$'      , 12.4206012 , 28.9841042, 255.555, 1 ),
+    Tag('Principal solar semidiurnal'              , r'$S_2$'      , 12.0       , 30.0      , 273.555, 2 ),
+    Tag('Larger lunar elliptic semidiurnal'        , r'$N_2$'      , 12.65834751, 28.4397295, 245.655, 3 ),
+    Tag('Larger lunar evectional'                  , r'$v_2$'      , 12.62600509, 28.5125831, 247.455, 11),
+    Tag('Variational'                              , r'$\mu_2$'    , 12.8717576 , 27.9682084, 237.555, 13),
+    Tag('Lunar elliptical semidiurnal second-order', '2"N'+r'$_2$' , 12.90537297, 27.8953548, 235.755, 14),
+    Tag('Smaller lunar evectional'                 , r'$\lambda_2$', 12.22177348, 29.4556253, 263.655, 16),
+    Tag('Larger solar elliptic'                    , r'$T_2$'      , 12.01644934, 29.9589333, 272.555, 27),
+    Tag('Smaller solar elliptic'                   , r'$R_2$'      , 11.98359564, 30.0410667, 274.555, 28),
+    Tag('Shallow water semidiurnal'                , r'$2SM_2$'    , 11.60695157, 31.0158958, 291.555, 31),
+    Tag('Smaller lunar elliptic semidiurnal'       , r'$L_2$'      , 12.19162085, 29.5284789, 265.455, 33),
+    Tag('Lunisolar semidiurnal'                    , r'$K_2$'      , 11.96723606, 30.0821373, 275.555, 35),
 
     # Diurnal
-    Tag('Lunar diurnal'                  , r'$K_1$' , 23.934, 15.041, 165.555, 4 ),
-    Tag('Lunar diurnal'                  , r'$O_1$' , 25.819, 13.943, 145.555, 6 ),
-    Tag('Lunar diurnal'                  , r'$OO_1$', 22.306, 16.139, 185.555, 15),
-    Tag('Solar diurnal'                  , r'$S_1$' , 24.000, 15.000, 164.555, 17),
-    Tag('Smaller lunar elliptic diurnal' , r'$M_1$' , 24.841, 14.492, 155.555, 18),
-    Tag('Smaller lunar elliptic diurnal' , r'$J_1$' , 23.098, 15.585, 175.455, 19),
-    Tag('Larger lunar evectional diurnal', r'$\rho$', 26.723, 13.472, 137.455, 25),
-    Tag('Larger lunar elliptic diurnal'  , r'$Q_1$' , 26.868, 13.399, 135.655, 26),
-    Tag('Larger elliptic diurnal'        , r'$2Q_1$', 28.006, 12.854, 125.755, 29),
-    Tag('Solar diurnal'                  , r'$P_1$' , 24.066, 14.959, 163.555, 30),
+    Tag('Lunar diurnal'                  , r'$K_1$' , 23.93447213, 15.0410686, 165.555, 4 ),
+    Tag('Lunar diurnal'                  , r'$O_1$' , 25.81933871, 13.9430356, 145.555, 6 ),
+    Tag('Lunar diurnal'                  , r'$OO_1$', 22.30608083, 16.1391017, 185.555, 15),
+    Tag('Solar diurnal'                  , r'$S_1$' , 24.0       , 15.0      , 164.555, 17),
+    Tag('Smaller lunar elliptic diurnal' , r'$M_1$' , 24.84120241, 14.4920521, 155.555, 18),
+    Tag('Smaller lunar elliptic diurnal' , r'$J_1$' , 23.09848146, 15.5854433, 175.455, 19),
+    Tag('Larger lunar evectional diurnal', r'$\rho$', 26.72305326, 13.4715145, 137.455, 25),
+    Tag('Larger lunar elliptic diurnal'  , r'$Q_1$' , 26.868350  , 13.3986609, 135.655, 26),
+    Tag('Larger elliptic diurnal'        , r'$2Q_1$', 28.00621204, 12.8542862, 125.755, 29),
+    Tag('Solar diurnal'                  , r'$P_1$' , 24.06588766, 14.9589314, 163.555, 30),
 
     # Long period
-    Tag('Lunar monthly'                  , r'$M_m$'   ,  661.311, 0.544, 65.455, 20),  # period  27.555 days
-    Tag('Solar semiannual'               , r'$S_{sa}$', 4383.076, 0.082, 57.555, 21),  # period 182.628 days
-    Tag('Solar annual'                   , r'$S_a$'   , 8766.153, 0.041, 56.555, 22),  # period 365.256 days
-    Tag('Lunisolar synodic fortnightly'  , r'$MS_f$'  ,  354.367, 1.016, 73.555, 23),  # period  14.765 days
-    Tag('Lunisolar fortnightly'          , r'$M_f$'   ,  327.860, 1.098, 75.555, 24),  # period  13.661 days
+    Tag('Lunar monthly'                  , r'$M_m$'   ,  661.3111655, 0.5443747, 65.455, 20),  # period  27.554631896 days
+    Tag('Solar semiannual'               , r'$S_{sa}$', 4383.076325 , 0.0821373, 57.555, 21),  # period 182.628180208 days
+    Tag('Solar annual'                   , r'$S_a$'   , 8766.15265  , 0.0410686, 56.555, 22),  # period 365.256360417 days
+    Tag('Lunisolar synodic fortnightly'  , r'$MS_f$'  ,  354.3670666, 1.0158958, 73.555, 23),  # period  14.765294442 days
+    Tag('Lunisolar fortnightly'          , r'$M_f$'   ,  327.8599387, 1.0980331, 75.555, 24),  # period  13.660830779 days
 
     # Short period
-    Tag('Shallow water overtides of principal lunar', r'$M_4$'      , 6.210,  57.968, 455.555, 5 ),
-    Tag('Shallow water overtides of principal lunar', r'$M_6$'      , 4.140,  86.952, 655.555, 7 ),
-    Tag('Shallow water terdiurnal'                  , r'$MK_3$'     , 8.177,  44.025, 365.555, 8 ),
-    Tag('Shallow water overtides of principal solar', r'$S_4$'      , 6.000,  60.000, 491.555, 9 ),
-    Tag('Shallow water quarter diurnal'             , r'$MN_4$'     , 6.269,  57.424, 445.655, 10),
-    Tag('Shallow water overtides of principal solar', r'$S_6$'      , 4.000,  90.000, np.NaN , 12),
-    Tag('Lunar terdiurnal'                          , r'$M_3$'      , 8.280,  43.476, 355.555, 32),
-    Tag('Shallow water terdiurnal'                  , '2"MK'+r'$_3$', 8.386,  42.927, 345.555, 34),
-    Tag('Shallow water eighth diurnal'              , r'$M_8$'      , 3.105, 115.936, 855.555, 36),
-    Tag('Shallow water quarter diurnal'             , r'$MS_4$'     , 6.103,  58.984, 473.555, 37),
+    Tag('Shallow water overtides of principal lunar', r'$M_4$'      , 6.210300601,  57.9682084, 455.555, 5 ),
+    Tag('Shallow water overtides of principal lunar', r'$M_6$'      , 4.140200401,  86.9523127, 655.555, 7 ),
+    Tag('Shallow water terdiurnal'                  , r'$MK_3$'     , 8.177140247,  44.0251729, 365.555, 8 ),
+    Tag('Shallow water overtides of principal solar', r'$S_4$'      , 6.0        ,  60.0      , 491.555, 9 ),
+    Tag('Shallow water quarter diurnal'             , r'$MN_4$'     , 6.269173724,  57.4238337, 445.655, 10),
+    Tag('Shallow water overtides of principal solar', r'$S_6$'      , 4.0        ,  90.0      , np.NaN , 12),
+    Tag('Lunar terdiurnal'                          , r'$M_3$'      , 8.280400802,  43.4761563, 355.555, 32),
+    Tag('Shallow water terdiurnal'                  , '2"MK'+r'$_3$', 8.38630265 ,  42.9271398, 345.555, 34),
+    Tag('Shallow water eighth diurnal'              , r'$M_8$'      , 3.105150301, 115.9364166, 855.555, 36),
+    Tag('Shallow water quarter diurnal'             , r'$MS_4$'     , 6.103339275,  58.9841042, 473.555, 37),
 )
 
 
