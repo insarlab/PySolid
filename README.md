@@ -2,7 +2,7 @@
 [![CircleCI](https://img.shields.io/circleci/build/github/insarlab/PySolid.svg?logo=circleci&label=test)](https://circleci.com/gh/insarlab/PySolid)
 [![Version](https://img.shields.io/github/v/release/insarlab/PySolid?color=green)](https://github.com/insarlab/PySolid/releases)
 [![License](https://img.shields.io/badge/license-GPLv3-yellow.svg)](https://github.com/insarlab/PySolid/blob/main/LICENSE)
-[![render](https://img.shields.io/badge/render-nbviewer-orange.svg)](https://nbviewer.jupyter.org/github/insarlab/PySolid/tree/main/docs)
+[![Citation](https://img.shields.io/badge/doi-10.1109%2FTGRS.2022.3168509-blue)](https://doi.org/10.1109/TGRS.2022.3168509)
 
 ## PySolid
 
@@ -69,7 +69,7 @@ python PySolid/tests/test_SET_grid.py
 python PySolid/tests/test_SET_point.py
 ```
 
-### 2. Example Usage
+### 2. Usage
 
 PySolid could compute solid Earth tides in two modes: **point** and **grid**. Both modes produce displacement in east, north and up direction.
 
@@ -145,5 +145,5 @@ tide_los = (  tide_e * np.sin(inc_angle) * np.cos(head_angle) * -1
 
 ### 3. Citing this work
 
-+   Yunjun, Z., Fattahi, H., Pi, X., Rosen, P., Simons, M., Agram, P., & Aoki, Y. (2022). Range Geolocation Accuracy of C/L-band SAR and its Implications for Operational Stack Coregistration. _IEEE Transactions on Geoscience and Remote Sensing_. [under review]
++   Yunjun, Z., Fattahi, H., Pi, X., Rosen, P., Simons, M., Agram, P., & Aoki, Y. (2022). Range Geolocation Accuracy of C/L-band SAR and its Implications for Operational Stack Coregistration. _IEEE Trans. Geosci. Remote Sens._, doi:[10.1109/TGRS.2022.3168509](https://doi.org/10.1109/TGRS.2022.3168509).
 +   Milbert, D. (2018), "solid: Solid Earth Tide", [Online]. Available: http://geodesyworld.github.io/SOFTS/solid.htm. Accessd on: 2020-09-06.
