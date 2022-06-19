@@ -145,5 +145,5 @@ tide_los = (  tide_e * np.sin(inc_angle) * np.cos(head_angle) * -1
 
 ### 3. Citing this work
 
-+   Yunjun, Z., Fattahi, H., Pi, X., Rosen, P., Simons, M., Agram, P., & Aoki, Y. (2022). Range Geolocation Accuracy of C/L-band SAR and its Implications for Operational Stack Coregistration. _IEEE Trans. Geosci. Remote Sens._, doi:[10.1109/TGRS.2022.3168509](https://doi.org/10.1109/TGRS.2022.3168509).
++   Yunjun, Z., Fattahi, H., Pi, X., Rosen, P., Simons, M., Agram, P., & Aoki, Y. (2022). Range Geolocation Accuracy of C-/L-band SAR and its Implications for Operational Stack Coregistration. _IEEE Trans. Geosci. Remote Sens., 60_, 1-19, doi:[10.1109/TGRS.2022.3168509](https://doi.org/10.1109/TGRS.2022.3168509), [arXiv](https://doi.org/10.31223/X5F641), [data](https://zenodo.org/record/6360749), [notebooks](https://github.com/yunjunz/2022-Geolocation).
 +   Milbert, D. (2018), "solid: Solid Earth Tide", [Online]. Available: http://geodesyworld.github.io/SOFTS/solid.htm. Accessd on: 2020-09-06.
