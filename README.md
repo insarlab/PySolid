@@ -21,6 +21,14 @@ conda install -c conda-forge pysolid
 
 Installing from `conda-forge` channel is recomended because PySolid contains Fortran source code, which required compilcation. Otherwise, you may build it from source as described below.
 
+PySolid is also available in the main archive of the [Debian](https://tracker.debian.org/pkg/pysolid) GNU/Linux OS. It can be installed by using your favourite package manager or running the following command:
+
+```bash
+apt install python3-pyaps3
+```
+
+The same procedure, in priciple, can be used in [Ubuntu](https://ubuntu.com) and all the other [Debian derivatives](https://wiki.debian.org/Derivatives/Census).
+
 #### 1.1 Build from source
 
 PySolid relies on a few Python modules as described in [requirements.txt](./requirements.txt) and [NumPy's f2py](https://numpy.org/doc/stable/f2py/) to build the Fortran source code. You could use `conda` to install all the dependencies, including the Fortran compiler, or use your own installed Fortran compiler and `pip` to install the rest.
