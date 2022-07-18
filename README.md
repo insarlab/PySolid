@@ -12,22 +12,20 @@ This is research code provided to you "as is" with NO WARRANTIES OF CORRECTNESS.
 
 ### 1. Install
 
-PySolid is available on the `conda-forge` channel and can be installed as below:
+PySolid is available on the [conda-forge](https://anaconda.org/conda-forge/pysolid) channel and the main archive of the [Debian](https://tracker.debian.org/pkg/pysolid) GNU/Linux OS. The released version can be install via `conda` as:
 
 ```shell
 # run "conda update pysolid" to update the installed version
 conda install -c conda-forge pysolid
 ```
 
-Installing from `conda-forge` channel is recomended because PySolid contains Fortran source code, which required compilcation. Otherwise, you may build it from source as described below.
+or via `apt` (or other package managers) for [Debian-derivative OS](https://wiki.debian.org/Derivatives/Census) users, including [Ubuntu](https://ubuntu.com), as:
 
-PySolid is also available in the main archive of the [Debian](https://tracker.debian.org/pkg/pysolid) GNU/Linux OS. It can be installed by using your favourite package manager or running the following command:
-
-```bash
-apt install python3-pyaps3
+```shell
+apt install python3-pysolid
 ```
 
-The same procedure, in priciple, can be used in [Ubuntu](https://ubuntu.com) and all the other [Debian derivatives](https://wiki.debian.org/Derivatives/Census).
+Installing via `conda` and `apt` is recomended because PySolid contains Fortran source code, which required compilcation. Otherwise, you may build it from source as described below.
 
 #### 1.1 Build from source
 
