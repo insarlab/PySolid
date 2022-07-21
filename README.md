@@ -71,8 +71,8 @@ To test the installation, run the following:
 
 ```bash
 python -c "import pysolid; print(pysolid.__version__)"
-python PySolid/tests/test_SET_grid.py
-python PySolid/tests/test_SET_point.py
+python PySolid/tests/grid.py
+python PySolid/tests/point.py
 ```
 
 ### 2. Usage
