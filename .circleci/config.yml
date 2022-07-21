@@ -63,5 +63,5 @@ jobs:
             # setup environment variables
             export PATH=${CONDA_PREFIX}/bin:${PATH}
             # run tests
-            python ${HOME}/tools/PySolid/tests/test_SET_point.py
-            python ${HOME}/tools/PySolid/tests/test_SET_grid.py
+            python ${HOME}/tools/PySolid/tests/point.py
+            python ${HOME}/tools/PySolid/tests/grid.py
