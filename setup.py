@@ -20,11 +20,9 @@ setup(
     version=version,
     description="A Python wrapper for solid to compute solid Earth tides",
     url="https://github.com/insarlab/PySolid",
-
+    download_url=("https://github.com/insarlab/PySolid/archive/v{}.tar.gz".format(version)),
     author="Zhang Yunjun, Dennis Milbert",
     author_email="yunjunzgeo@gmail.com",
-
-    license='GPL-3.0-or-later',
     license_files=('LICENSE',),
 
     classifiers=[
@@ -36,6 +34,11 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     keywords="solid Eartth tides, deformation, geodesy, geophysics",
+
+    project_urls={
+        "Bug Reports": "https://github.com/insarlab/PySolid/issues",
+        "Source": "https://github.com/insarlab/PySolid",
+    },
 
     # package discovery
     packages=setuptools.find_packages("src"),  # include all packages under src
@@ -57,10 +60,5 @@ setup(
     include_package_data=True,
     package_data={
         "pysolid": ["solid.for"],
-    },
-
-    project_urls={
-        "Bug Reports": "https://github.com/insarlab/PySolid/issues",
-        "Source": "https://github.com/insarlab/PySolid",
     },
 )
