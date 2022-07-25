@@ -1,7 +1,7 @@
 [![Language](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/)
 [![CircleCI](https://img.shields.io/circleci/build/github/insarlab/PySolid.svg?logo=circleci&label=test)](https://circleci.com/gh/insarlab/PySolid)
 [![Version](https://img.shields.io/github/v/release/insarlab/PySolid?color=green)](https://github.com/insarlab/PySolid/releases)
-[![License](https://img.shields.io/badge/license-GPLv3-yellow.svg)](https://github.com/insarlab/PySolid/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/license-GPLv3+-yellow.svg)](https://github.com/insarlab/PySolid/blob/main/LICENSE)
 [![Citation](https://img.shields.io/badge/doi-10.1109%2FTGRS.2022.3168509-blue)](https://doi.org/10.1109/TGRS.2022.3168509)
 
 ## PySolid
