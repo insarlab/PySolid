@@ -82,7 +82,7 @@ PySolid could compute solid Earth tides in two modes: **point** and **grid**. Bo
 +   **Point mode:** compute 1D tides time-series at a specific point for a given time period
 +   **Grid mode:** compute 2D tides grid at a specific time for a given spatial grid
 
-#### 2.1 Point Mode [[nbviewer](https://nbviewer.jupyter.org/github/insarlab/PySolid/blob/main/docs/plot_point_SET.ipynb)]
+#### 2.1 Point Mode [[notebook](./docs/plot_point_SET.ipynb)]
 
 ```python
 import datetime as dt
@@ -95,13 +95,12 @@ dt0 = dt.datetime(2020, 1, 1, 4, 0, 0)  # start date and time
 dt1 = dt.datetime(2021, 1, 1, 2, 0, 0)  # end   date and time
 
 # compute SET via pysolid
-(dt_out,
- tide_e,
- tide_n,
- tide_u) = pysolid.calc_solid_earth_tides_point(lat, lon, dt0, dt1,
-                                                step_sec=step_sec,
-                                                display=False,
-                                                verbose=False)
+dt_out, tide_e, tide_n, tide_u = pysolid.calc_solid_earth_tides_point(
+    lat, lon, dt0, dt1,
+    step_sec=step_sec,
+    display=False,
+    verbose=False,
+)
 
 # plot the power spectral density of SET up component
 pysolid.plot_power_spectral_density4tides(tide_u, sample_spacing=step_sec)
@@ -112,7 +111,7 @@ pysolid.plot_power_spectral_density4tides(tide_u, sample_spacing=step_sec)
   <img width="600" src="https://yunjunzhang.files.wordpress.com/2021/01/set_psd-1.png">
 </p>
 
-#### 2.2 Grid Mode [[nbviewer](https://nbviewer.jupyter.org/github/insarlab/PySolid/blob/main/docs/plot_grid_SET.ipynb)]
+#### 2.2 Grid Mode [[notebook](./docs/plot_grid_SET.ipynb)]
 
 ```python
 import datetime as dt
@@ -121,7 +120,7 @@ import pysolid
 
 # prepare inputs
 dt_obj = dt.datetime(2020, 12, 25, 14, 7, 44)
-atr = {
+meta = {
     'LENGTH' : 500,                # number of rows
     'WIDTH'  : 450,                # number of columns
     'X_FIRST': -126,               # min longitude in degree (upper left corner of the upper left pixel)
@@ -131,17 +130,19 @@ atr = {
 }
 
 # compute SET via pysolid
-(tide_e,
- tide_n,
- tide_u) = pysolid.calc_solid_earth_tides_grid(dt_obj, atr,
-                                               display=False,
-                                               verbose=True)
+tide_e, tide_n, tide_u = pysolid.calc_solid_earth_tides_grid(
+    dt_obj, meta,
+    display=False,
+    verbose=True,
+)
 
 # project SET from ENU to radar line-of-sight (LOS) direction with positive for motion towards satellite
-inc_angle  =   34.0 / 180. * np.pi  # radian, typical value for Sentinel-1
-head_angle = -168.0 / 180. * np.pi  # radian, typical value for Sentinel-1 desc track
-tide_los = (  tide_e * np.sin(inc_angle) * np.cos(head_angle) * -1
-            + tide_n * np.sin(inc_angle) * np.sin(head_angle)
+# inc_angle : incidence angle of the LOS vector (from ground to radar platform) measured from vertical.
+# az_angle  : azimuth   angle of the LOS vector (from ground to radar platform) measured from the north, with anti-clockwirse as positive.
+inc_angle = np.deg2rad(34)   # radian, typical value for Sentinel-1
+az_angle = np.deg2rad(-102)  # radian, typical value for Sentinel-1 descending track
+tide_los = (  tide_e * np.sin(inc_angle) * np.sin(az_angle) * -1
+            + tide_n * np.sin(inc_angle) * np.cos(az_angle)
             + tide_u * np.cos(inc_angle))
 ```
 
