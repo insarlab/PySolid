@@ -11,20 +11,13 @@
 #   pysolid.calc_solid_earth_tides_point()
 
 
-import os
 import collections
 import datetime as dt
-import numpy as np
-from scipy import signal
-from matplotlib import pyplot as plt, ticker, dates as mdates
+import os
 
-try:
-    from pysolid.solid import solid_point
-except ImportError:
-    msg = "Cannot import name 'solid' from 'pysolid'!"
-    msg += '\n    Maybe solid.for is NOT compiled yet.'
-    msg += '\n    Check instruction at: https://github.com/insarlab/PySolid.'
-    raise ImportError(msg)
+import numpy as np
+from matplotlib import pyplot as plt, ticker, dates as mdates
+from scipy import signal
 
 
 ## Tidal constituents
@@ -168,6 +161,13 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
                  tide_n,
                  tide_u) = calc_solid_earth_tides_point_per_day(34.0, -118.0, '20180219')
     """
+    try:
+        from pysolid.solid import solid_point
+    except ImportError:
+        msg = "Cannot import name 'solid' from 'pysolid'!"
+        msg += '\n    Maybe solid.for is NOT compiled yet.'
+        msg += '\n    Check instruction at: https://github.com/insarlab/PySolid.'
+        raise ImportError(msg)
 
     ## calc solid Earth tides and write to text file
     txt_file = os.path.abspath('solid.txt')

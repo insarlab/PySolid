@@ -4,17 +4,17 @@
 #   because a Fortran compiler is required but not available via pip
 
 
+import os
+import sys
+
 # always prefer setuptools over distutils
 import setuptools
 from numpy.distutils.core import setup, Extension
 
-# Grab from version.py file: version
-# Note by Yunjun, Oct 2022: do not use sys.path.append() to import pysolid because
-# pysolid.__init__ requires the pysolid.solid sub-module, which is not compiled yet.
-with open("src/pysolid/version.py", "r") as f:
-    lines = f.readlines()
-    line = [line for line in lines if line.strip().startswith("Tag(")][0].strip()
-    version = line.replace("'",'"').split('"')[1]
+# Grab from pysolid.version: version
+# link: https://stackoverflow.com/questions/53648900
+sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+from pysolid.version import version
 
 # Grab from README file: long_description
 with open("README.md", "r") as f:
