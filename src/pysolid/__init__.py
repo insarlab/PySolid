@@ -1,5 +1,5 @@
 # get version info
-from pysolid.version import release_version as __version__
+from pysolid.version import version as __version__
 
 # top-level functions
 from pysolid.grid import (

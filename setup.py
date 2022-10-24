@@ -1,5 +1,7 @@
 # Author: Zhang Yunjun, Jan 2021
 # Copyright 2020, by the California Institute of Technology.
+# Note by Yunjun, Oct 2022: "pip install pysolid" does not work,
+#   because a Fortran compiler is required but not available via pip
 
 
 # always prefer setuptools over distutils
@@ -7,13 +9,16 @@ import setuptools
 from numpy.distutils.core import setup, Extension
 
 # Grab from version.py file: version
+# Note by Yunjun, Oct 2022: do not use sys.path.append() to import pysolid because
+# pysolid.__init__ requires the pysolid.solid sub-module, which is not compiled yet.
 with open("src/pysolid/version.py", "r") as f:
     lines = f.readlines()
     line = [line for line in lines if line.strip().startswith("Tag(")][0].strip()
     version = line.replace("'",'"').split('"')[1]
 
-# specify fortran extensions to build with numpy.f2py
-solid_ext = Extension(name='pysolid.solid', sources=['src/pysolid/solid.for'])
+# Grab from README file: long_description
+with open("README.md", "r") as f:
+    long_description = f.read()
 
 setup(
     name='pysolid',
@@ -21,6 +26,8 @@ setup(
     description="A Python wrapper for solid to compute solid Earth tides",
     url="https://github.com/insarlab/PySolid",
     download_url=("https://github.com/insarlab/PySolid/archive/v{}.tar.gz".format(version)),
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author="Zhang Yunjun, Dennis Milbert",
     author_email="yunjunzgeo@gmail.com",
     license="GPL-3.0-or-later",
@@ -46,7 +53,9 @@ setup(
     package_dir={"": "src"},                   # tell distutils packages are under src
 
     # build fortran deps with numpy.f2py
-    ext_modules=[solid_ext],
+    ext_modules=[
+        Extension(name='pysolid.solid', sources=['src/pysolid/solid.for']),
+    ],
 
     # dependencies
     python_requires=">=3.6",
