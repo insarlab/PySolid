@@ -8,6 +8,12 @@ on:
     tags:
       - v*
 
+# activate miniconda environment
+# link: https://github.com/marketplace/actions/provision-with-micromamba#IMPORTANT
+defaults:
+  run:
+    shell: bash -l {0}
+
 jobs:
   build-n-publish:
     if: github.repository_owner == 'insarlab'
@@ -24,6 +30,12 @@ jobs:
       with:
         python-version: "3.10"
 
+    # link: https://github.com/marketplace/actions/provision-with-micromamba
+    - name: Install Conda environment with Micromamba
+      uses: mamba-org/provision-with-micromamba@main
+      with:
+        environment-file: environment.yml
+
     - name: Install pypa/build
       run: >-
         python -m
@@ -36,9 +48,12 @@ jobs:
         python -m
         build
         --sdist
-        --wheel
+        --no-isolation    # not install in an isolated environment
         --outdir dist/
         .
+        # skip due to the bad request error from pypi:
+        # binary wheel has an unsupported platform tag 'linux_x86_64'
+        #--wheel
 
     - name: Publish developed version 📦 to Test PyPI
       if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
