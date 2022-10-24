@@ -1549,9 +1549,9 @@
 ***** http://www.csgnetwork.com/julianmodifdateconv.html
 
       implicit double precision(a-h,o-z)
-      !*** upper limit, leap second table, 2022dec28
+      !*** upper limit, leap second table, 2023jun28
       !*** lower limit, leap second table, 1972jan01
-      parameter(MJDUPPER=59941)
+      parameter(MJDUPPER=60123)
       parameter(MJDLOWER=41317)
 
       !*** leap second table limit flag
@@ -1632,7 +1632,7 @@
 ***** other leap second references at:
 ***** http://hpiers.obspm.fr/eoppc/bul/bulc/Leap_Second_History.dat
 ***** http://hpiers.obspm.fr/eoppc/bul/bulc/bulletinc.dat
-***** File expires on 28 December 2022
+***** File expires on 28 June 2023
 
 *** test against newest leaps first
 
