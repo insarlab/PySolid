@@ -16,8 +16,6 @@ import datetime as dt
 import os
 
 import numpy as np
-from matplotlib import pyplot as plt, ticker, dates as mdates
-from scipy import signal
 
 
 ## Tidal constituents
@@ -205,6 +203,8 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
 def plot_solid_earth_tides_point(dt_out, tide_e, tide_n, tide_u, lalo=None,
                                  out_fig=None, save=False, display=True):
     """Plot the solid Earth tides at one point."""
+    from matplotlib import pyplot as plt, dates as mdates
+
     # plot
     fig, axs = plt.subplots(nrows=3, ncols=1, figsize=[6, 4], sharex=True)
     for ax, data, label in zip(axs.flatten(),
@@ -247,6 +247,9 @@ def plot_power_spectral_density4tides(tide_ts, sample_spacing, out_fig=None, fig
     """Plot the power spectral density (PSD) of tides time-series.
     Note: for accurate PSD analysis, a long time-series, e.g. one year, is recommended.
     """
+    from matplotlib import pyplot as plt, ticker
+    from scipy import signal
+
     ## calc PSD
     freq, psd = signal.periodogram(tide_ts, fs=1/sample_spacing, scaling='density')
     # get rid of zero in the first element
