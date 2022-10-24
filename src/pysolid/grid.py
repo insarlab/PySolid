@@ -11,18 +11,11 @@
 #   pysolid.calc_solid_earth_tides_grid()
 
 
-import os
-import numpy as np
 import datetime as dt
-from skimage.transform import resize
+import os
 
-try:
-    from pysolid.solid import solid_grid
-except ImportError:
-    msg = "Cannot import name 'solid' from 'pysolid'!"
-    msg += '\n    Maybe solid.for is NOT compiled yet.'
-    msg += '\n    Check instruction at: https://github.com/insarlab/PySolid.'
-    raise ImportError(msg)
+import numpy as np
+from skimage.transform import resize
 
 
 ##################################  Earth tides - grid mode  ###################################
@@ -49,6 +42,14 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
     Examples:   atr = readfile.read_attribute('geo_velocity.h5')
                 tide_e, tide_n, tide_u = calc_solid_earth_tides_grid('20180219', atr)
     """
+    try:
+        from pysolid.solid import solid_grid
+    except ImportError:
+        msg = "Cannot import name 'solid' from 'pysolid'!"
+        msg += '\n    Maybe solid.for is NOT compiled yet.'
+        msg += '\n    Check instruction at: https://github.com/insarlab/PySolid.'
+        raise ImportError(msg)
+
     vprint = print if verbose else lambda *args, **kwargs: None
 
     # location
