@@ -3,8 +3,15 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - python>=3.8
+  - pip
+  # For running
   - numpy
   - scipy
   - matplotlib
   - scikit-image
   - fortran-compiler    # A generic way to obtain the Fortran compiler across platforms through conda-forge channel
+  # For packaging and distribution
+  - setuptools
+  - setuptools_scm
+  - wheel
