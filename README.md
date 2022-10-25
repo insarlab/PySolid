@@ -25,7 +25,7 @@ or via `apt` (or other package managers) for [Debian-derivative OS](https://wiki
 apt install python3-pysolid
 ```
 
-Installing via `conda` and `apt` is recomended because PySolid contains Fortran source code, which required compilcation. Otherwise, you may build it from source as described below.
+Installing via `conda` and `apt` is recommended because PySolid contains Fortran source code, which required compilation. Otherwise, you may build it from source as described below.
 
 #### 1.1 Build from source
 
