@@ -1,6 +1,9 @@
 # Author: Zhang Yunjun, Jan 2021
 # Copyright 2020, by the California Institute of Technology.
-from setuptools import setup, Extension
+
+# always prefer setuptools over distutils
+import setuptools
+from numpy.distutils.core import setup, Extension
 
 setup(
     ext_modules=[

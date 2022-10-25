@@ -1,12 +1,13 @@
 [build-system]
-requires = ["setuptools>=61.0", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools>=61.0", "setuptools_scm[toml]>=6.2", "numpy", "wheel"]
+
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pysolid"
 authors = [
     {name='Zhang Yunjun', email='yunjunzgeo@gmail.com'},
-    {name='Dennis Milbert', email=''},
+    {name='Dennis Milbert'},
 ]
 description = "A Python wrapper for solid to compute solid Earth tides"
 readme = "README.md"
@@ -41,6 +42,6 @@ zip-safe = false
 where = ["src"]
 
 [tool.setuptools.package-data]
-pysolid = ["solid.for"]
+pysolid = ["*.for"]
 
 [tool.setuptools_scm]
