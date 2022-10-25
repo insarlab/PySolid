@@ -15,6 +15,7 @@ import datetime as dt
 import os
 
 import numpy as np
+from skimage.transform import resize
 
 
 ##################################  Earth tides - grid mode  ###################################
@@ -41,7 +42,6 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
     Examples:   atr = readfile.read_attribute('geo_velocity.h5')
                 tide_e, tide_n, tide_u = calc_solid_earth_tides_grid('20180219', atr)
     """
-    from skimage.transform import resize
     try:
         from pysolid.solid import solid_grid
     except ImportError:

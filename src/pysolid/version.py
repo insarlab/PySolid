@@ -12,7 +12,6 @@ import subprocess
 # release history
 Tag = collections.namedtuple('Tag', 'version date')
 release_history = (
-    Tag('0.2.4', '2022-10-24'),
     Tag('0.2.3', '2022-10-23'),
     Tag('0.2.2', '2022-07-20'),
     Tag('0.2.1', '2022-01-05'),
