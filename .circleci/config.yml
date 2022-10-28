@@ -36,7 +36,7 @@ jobs:
           command: |
             apt update
             apt-get update --yes && apt-get upgrade --yes
-            apt-get install --yes wget
+            apt-get install --yes wget git
             # download and install miniconda3
             mkdir -p ${HOME}/tools
             cd ${HOME}/tools
