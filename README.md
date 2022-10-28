@@ -56,10 +56,13 @@ python -m pip install -r PySolid/requirements.txt
 
 ```bash
 # option 1: use pip to install pysolid into the current environment
-# use "pip install -e" to install in the development mode
 python -m pip install PySolid
 
-# option 2: manually compile the Fortran code and setup environment variable
+# option 2: use pip to install pysolid in develop mode (editable) into the current environment
+export SETUPTOOLS_ENABLE_FEATURES="legacy-editable"
+python -m pip install -e PySolid
+
+# option 3: manually compile the Fortran code and setup environment variable
 cd PySolid/src/pysolid
 f2py -c -m solid solid.for
 export PYTHONPATH=${PYTHONPATH}:~/tools/PySolid
