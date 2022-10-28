@@ -1,7 +1,13 @@
 name: Publish distributions 📦 to PyPI
 
 # Build on every branch push, tag push, and pull request change:
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+  pull_request:
 
 jobs:
   build_wheels:
@@ -41,7 +47,7 @@ jobs:
   upload_pypi:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'insarlab' & github.event_name == 'push'
+    if: github.repository_owner == 'insarlab' && github.event_name == 'push'
     steps:
       - uses: actions/download-artifact@v3
         with:
