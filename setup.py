@@ -6,6 +6,7 @@ import setuptools
 from numpy.distutils.core import setup, Extension
 
 setup(
+    # fortran extensions to build with numpy.f2py
     ext_modules=[
         Extension(name='pysolid.solid', sources=['src/pysolid/solid.for']),
     ],
