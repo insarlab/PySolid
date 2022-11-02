@@ -59,6 +59,7 @@ python -m pip install -r PySolid/requirements.txt
 python -m pip install PySolid
 
 # option 2: use pip to install pysolid in develop mode (editable) into the current environment
+# setting an environmental variable as below is required for editable installs via pyproject.toml
 export SETUPTOOLS_ENABLE_FEATURES="legacy-editable"
 python -m pip install -e PySolid
 
