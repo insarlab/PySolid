@@ -1,4 +1,4 @@
-name: Publish distributions 📦 to PyPI
+name: Publish 📦 to PyPI
 
 # Build on every branch push, tag push, and pull request change:
 on:
