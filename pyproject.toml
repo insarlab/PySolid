@@ -6,8 +6,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pysolid"
 authors = [
-    {name='Zhang Yunjun', email='yunjunzgeo@gmail.com'},
-    {name='Dennis Milbert'},
+    {name="Zhang Yunjun", email="yunjunzgeo@gmail.com"},
+    {name="Dennis Milbert"},
 ]
 description = "A Python wrapper for solid to compute solid Earth tides"
 readme = "README.md"
@@ -23,10 +23,10 @@ classifiers=[
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    'numpy',
-    'scipy',
-    'matplotlib',
-    'scikit-image',
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "scikit-image",
 ]
 dynamic = ["version"]
 
@@ -45,3 +45,5 @@ where = ["src"]
 pysolid = ["*.for"]
 
 [tool.setuptools_scm]
+version_scheme = "post-release"
+local_scheme = "no-local-version"
