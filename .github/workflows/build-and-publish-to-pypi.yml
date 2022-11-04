@@ -84,7 +84,7 @@ jobs:
           path: dist
 
       - name: Publish developed version 📦 to Test PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1.5.0
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
@@ -93,7 +93,7 @@ jobs:
           verbose: true
 
       - name: Publish released version 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.5.0
+        uses: pypa/gh-action-pypi-publish@release/v1
         if: startsWith(github.ref, 'refs/tags/v')
         with:
           user: __token__
