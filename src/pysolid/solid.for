@@ -1766,7 +1766,7 @@
 *** convert tai (sec) to terrestrial time (sec)
 
       implicit double precision(a-h,o-z)
-      double precision tai2tt
+      double precision ttai
 
 ***** http://tycho.usno.navy.mil/systime.html
       tai2tt = ttai + 32.184d0
