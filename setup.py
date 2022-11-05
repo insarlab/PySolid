@@ -6,9 +6,20 @@ import setuptools
 from numpy.distutils.core import setup, Extension
 
 setup(
-    # avoid UNKNOWN name in setuptools<60, the latter is required for numpy.distutils
+    ## add the following redundant setup for setuptools<60, the latter is required for numpy.distutils
     name='pysolid',
-    # fortran extensions to build with numpy.f2py
+
+    # package discovery
+    packages=setuptools.find_packages("src"),  # include all packages under src
+    package_dir={"": "src"},                   # tell distutils packages are under src
+
+    # data files
+    include_package_data=True,
+    package_data={
+        "pysolid": ["solid.for"],
+    },
+
+    ## fortran extensions to build with numpy.f2py
     ext_modules=[
         Extension(name='pysolid.solid', sources=['src/pysolid/solid.for']),
     ],

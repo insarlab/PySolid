@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pysolid"
+description = "A Python wrapper for solid to compute solid Earth tides"
 authors = [
     {name="Zhang Yunjun", email="yunjunzgeo@gmail.com"},
     {name="Dennis Milbert"},
 ]
-description = "A Python wrapper for solid to compute solid Earth tides"
 readme = "README.md"
 requires-python = ">=3.8"
 keywords = ["solid Earth tides", "deformation", "geodesy", "geophysics"]
