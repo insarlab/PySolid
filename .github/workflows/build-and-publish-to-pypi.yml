@@ -47,6 +47,7 @@ jobs:
         env:
           # Disable building for PyPy and 32bit.
           CIBW_SKIP: pp* *-win32 *-manylinux_i686
+          CIBW_ENVIRONMENT_MACOS: SETUPTOOLS_USE_DISTUTILS=stdlib
           # Package the DLL dependencies in the wheel for windows (done by default for the other platforms).
           # delvewheel cannot mangle the libraries, stripping does not work.
           CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel
