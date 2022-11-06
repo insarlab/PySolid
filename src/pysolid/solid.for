@@ -361,7 +361,8 @@
 
       implicit double precision(a-h,o-z)
       double precision xsta(3),xsun(3),xmon(3),dxtide(3),xcorsta(3)
-      double precision h20,l20,h3,l3,h2,l2
+      double precision h20,l20,h3,l3,h2,l2,fmjd
+      integer mjd
       double precision mass_ratio_sun,mass_ratio_moon
       logical lflag,leapflag
       !*** leap second table limit flag
@@ -533,8 +534,8 @@
 *** output: xcorsta
 
       implicit double precision (a-h,o-z)
-      dimension xsta(3),xsun(3),xmon(3),xcorsta(3)
-      double precision l1,l1d,l1sd
+      double precision xsta(3),xsun(3),xmon(3),xcorsta(3)
+      double precision l1,l1d,l1sd,fac2sun,fac2mon
       data l1d/0.0012d0/,l1sd/0.0024d0/
 
       rsta=enorm8(xsta)
@@ -593,7 +594,7 @@
 
       implicit double precision (a-h,o-z)
       double precision xsta(3),xcorsta(3),datdi(9,31)
-      double precision deg2rad
+      double precision deg2rad, fhr, t
       data deg2rad/0.017453292519943295769d0/
 
 *** note, following table is derived from dehanttideinelMJD.f (2000oct30 16:10)
@@ -750,7 +751,7 @@
       subroutine step2lon(xsta,fhr,t,xcorsta)
 
       implicit double precision (a-h,o-z)
-      double precision deg2rad
+      double precision deg2rad,fhr,t
       double precision xsta(3),xcorsta(3),datdi(9,5)
       data deg2rad/0.017453292519943295769d0/
 
@@ -836,7 +837,8 @@
 *** output: xcorsta
 
       implicit double precision (a-h,o-z)
-      dimension xsta(3),xsun(3),xmon(3),xcorsta(3)
+      double precision xsta(3),xsun(3),xmon(3),xcorsta(3)
+      double precision fac2sun,fac2mon
       data dhi/-0.0025d0/,dli/-0.0007d0/
 
       rsta=enorm8(xsta)
@@ -878,7 +880,8 @@
 *** output: xcorsta
 
       implicit double precision (a-h,o-z)
-      dimension xsta(3),xsun(3),xmon(3),xcorsta(3)
+      double precision xsta(3),xsun(3),xmon(3),xcorsta(3)
+      double precision fac2sun, fac2mon
       data dhi/-0.0022d0/,dli/-0.0007d0/
 
       rsta=enorm8(xsta)
@@ -923,6 +926,7 @@
 
       implicit double precision (a-h,o-z)
       double precision x(3),y(3)
+      double precision r1,r2,scal
 
       r1=dsqrt(x(1)*x(1) + x(2)*x(2) + x(3)*x(3))
       r2=dsqrt(y(1)*y(1) + y(2)*y(2) + y(3)*y(3))
@@ -969,7 +973,9 @@
 *** section 3.2, pg. 38-39  routine MiniMoon
 
       implicit double precision(a-h,o-z)
-      dimension rm(3)
+      double precision rm(3)
+      integer mjd
+      double precision fmjd
       logical lflag,leapflag
       !*** leap second table limit flag
       !*** leap second table limit flag
@@ -1105,6 +1111,8 @@
 *** section 2.3.1, pg. 33
 
       implicit double precision(a-h,o-z)
+      integer mjd
+      double precision fmjd,ghar
       common/stuff/rad,pi,pi2
 
 *** need UTC to get sidereal time ("astronomy on the personal computer", 4th ed)
@@ -1156,7 +1164,9 @@
 *** section 3.2, pg. 39  routine MiniSun
 
       implicit double precision(a-h,o-z)
-      dimension rs(3)
+      double precision rs(3)
+      double precision fmjd
+      integer mjd
       logical lflag,leapflag
       !*** leap second table limit flag
       !*** leap second table limit flag
@@ -1239,6 +1249,7 @@
 *** determine range,azimuth,vertical angle from local horizon coord.
 
       implicit double precision(a-h,o-z)
+      double precision u,v,w,ra,az,va
       
       s2=u*u+v*v
       r2=s2+w*w
@@ -1257,6 +1268,7 @@
 *** convert geodetic lat, long, ellip ht. to x,y,z
 
       implicit double precision(a-h,o-z)
+      double precision gla,glo,eht,x,y,z
       common/comgrs/a,e2
 
       sla=dsin(gla)
@@ -1278,6 +1290,7 @@
 *** compute a geodetic h cartesian sys   (u,v,w)
 
       implicit double precision(a-h,o-z)
+      double precision gla,glo,u,v,w,x,y,z
 
       sb=dsin(gla)
       cb=dcos(gla)
@@ -1297,6 +1310,7 @@
 *** x,y,z transformed into u,v,w
 
       implicit double precision(a-h,o-z)
+      double precision theta,x,y,z,u,v,w
       
       s=dsin(theta)
       c=dcos(theta)
@@ -1314,6 +1328,7 @@
 *** x,y,z transformed into u,v,w
 
       implicit double precision(a-h,o-z)
+      double precision theta,x,y,z,u,v,w
       
       s=dsin(theta)
       c=dcos(theta)
@@ -1334,7 +1349,7 @@
 *** allows single number expression of time in seconds w.r.t. mjd0
 
       implicit double precision(a-h,o-z)
-      integer y
+      integer y,iyr,imo,idy
       save /mjdoff/
       common/mjdoff/mjd0
 
@@ -1369,7 +1384,8 @@
 *** adapted from civmjd()
 
       implicit double precision(a-h,o-z)
-      integer y
+      integer y,iyr,imo,idy,ihr,imn
+      double precision sec,tsec
       save /mjdoff/
       common/mjdoff/mjd0
 
@@ -1402,6 +1418,8 @@
 *** adapted from mjdciv()
 
       implicit double precision(a-h,o-z)
+      integer iyr,imo,idy,ihr,imn
+      double precision sec,tsec
       save /mjdoff/
       common/mjdoff/mjd0
 
@@ -1445,7 +1463,8 @@
 *** operation confirmed against table 3.3 values on pg.34
 
       implicit double precision(a-h,o-z)
-      integer y
+      integer y,iyr,imo,idy,ihr,imn,mjd
+      double precision sec,fmjd
 
       if(iyr.lt.1900) stop 34588
 
@@ -1476,6 +1495,8 @@
 *** operation confirmed for leap years (incl. year 2000)
 
       implicit double precision(a-h,o-z)
+      integer mjd,iyr,imo,idy,ihr,imn
+      double precision fmjd,sec
 
       rjd=mjd+fmjd+2400000.5d0
       ia=(rjd+0.5d0)
@@ -1510,6 +1531,7 @@
 *** convert utc (sec) to terrestrial time (sec)
 
       implicit double precision(a-h,o-z)
+      double precision tutc
 
       ttai   = utc2tai(tutc)
       utc2ttt= tai2tt(ttai)
@@ -1522,6 +1544,7 @@
 *** convert gps time (sec) to terrestrial time (sec)
 
       implicit double precision(a-h,o-z)
+      double precision tgps
 
       ttai   = gps2tai(tgps)
       gps2ttt= tai2tt(ttai)
@@ -1534,6 +1557,7 @@
 *** convert utc (sec) to tai (sec)
 
       implicit double precision(a-h,o-z)
+      double precision tutc
 
       utc2tai = tutc - getutcmtai(tutc)
 
@@ -1549,6 +1573,7 @@
 ***** http://www.csgnetwork.com/julianmodifdateconv.html
 
       implicit double precision(a-h,o-z)
+      double precision tsec
       !*** upper limit, leap second table, 2023jun28
       !*** lower limit, leap second table, 1972jan01
       parameter(MJDUPPER=60123)
@@ -1741,6 +1766,7 @@
 *** convert tai (sec) to terrestrial time (sec)
 
       implicit double precision(a-h,o-z)
+      double precision ttai
 
 ***** http://tycho.usno.navy.mil/systime.html
       tai2tt = ttai + 32.184d0
@@ -1753,6 +1779,7 @@
 *** convert gps time (sec) to tai (sec)
 
       implicit double precision(a-h,o-z)
+      double precision tgps
 
 ***** http://leapsecond.com/java/gpsclock.htm
 ***** http://tycho.usno.navy.mil/leapsec.html

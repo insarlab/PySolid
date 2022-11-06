@@ -1,15 +1,14 @@
 [build-system]
-requires = ["setuptools>=61.0", "setuptools_scm[toml]>=6.2", "numpy", "wheel"]
-
+requires = ["setuptools<60.0", "setuptools_scm[toml]>=6.2", "numpy<1.23.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pysolid"
+description = "A Python wrapper for solid to compute solid Earth tides"
 authors = [
     {name="Zhang Yunjun", email="yunjunzgeo@gmail.com"},
     {name="Dennis Milbert"},
 ]
-description = "A Python wrapper for solid to compute solid Earth tides"
 readme = "README.md"
 requires-python = ">=3.8"
 keywords = ["solid Earth tides", "deformation", "geodesy", "geophysics"]

@@ -11,7 +11,7 @@ on:
 
 jobs:
   build_wheels:
-    name: Build Python 🐍 wheels on ${{ matrix.os }}
+    name: Build 🐍 wheels 📦 on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -47,6 +47,8 @@ jobs:
         env:
           # Disable building for PyPy and 32bit.
           CIBW_SKIP: pp* *-win32 *-manylinux_i686
+          # Fix error for python 3.11 on macOS
+          CIBW_ENVIRONMENT_MACOS: SETUPTOOLS_USE_DISTUTILS=stdlib
           # Package the DLL dependencies in the wheel for windows (done by default for the other platforms).
           # delvewheel cannot mangle the libraries, stripping does not work.
           CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel
@@ -57,7 +59,7 @@ jobs:
           path: ./wheelhouse/*.whl
 
   build_sdist:
-    name: Build Python 🐍 source distribution
+    name: Build 🐍 source distribution 📦
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -72,6 +74,7 @@ jobs:
           path: dist/*.tar.gz
 
   upload_pypi:
+    name: Upload 📦 to PyPI
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
     if: github.repository_owner == 'insarlab' && github.event_name == 'push'
