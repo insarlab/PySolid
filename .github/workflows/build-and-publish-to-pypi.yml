@@ -11,7 +11,7 @@ on:
 
 jobs:
   build_wheels:
-    name: Build Python 🐍 wheels on ${{ matrix.os }}
+    name: Build 🐍 wheels 📦 on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -59,7 +59,7 @@ jobs:
           path: ./wheelhouse/*.whl
 
   build_sdist:
-    name: Build Python 🐍 source distribution
+    name: Build 🐍 source distribution 📦
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -74,6 +74,7 @@ jobs:
           path: dist/*.tar.gz
 
   upload_pypi:
+    name: Upload 📦 to PyPI
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
     if: github.repository_owner == 'insarlab' && github.event_name == 'push'
