@@ -25,9 +25,8 @@ or via `apt` (or other package managers) for [Debian-derivative OS](https://wiki
 apt install python3-pysolid
 ```
 
-Installing via `conda` and `apt` is recommended because PySolid contains Fortran source code, which required compilation. Otherwise, you may build it from source as described below.
-
-#### 1.1 Build from source
+<details>
+<p><summary>Or build from source:</summary></p>
 
 PySolid relies on a few Python modules as described in [requirements.txt](./requirements.txt) and [NumPy's f2py](https://numpy.org/doc/stable/f2py/) to build the Fortran source code. You could use `conda` to install all the dependencies, including the Fortran compiler, or use your own installed Fortran compiler and `pip` to install the rest.
 
@@ -69,7 +68,7 @@ f2py -c -m solid solid.for
 export PYTHONPATH=${PYTHONPATH}:~/tools/PySolid
 ```
 
-#### 1.2 Test the installation
+##### d. Test the installation
 
 To test the installation, run the following:
 
@@ -78,6 +77,7 @@ python -c "import pysolid; print(pysolid.__version__)"
 python PySolid/tests/grid.py
 python PySolid/tests/point.py
 ```
+</details>
 
 ### 2. Usage
 
