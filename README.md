@@ -1,12 +1,13 @@
-[![Language](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![CircleCI](https://img.shields.io/circleci/build/github/insarlab/PySolid.svg?logo=circleci&label=test)](https://circleci.com/gh/insarlab/PySolid)
-[![Version](https://img.shields.io/github/v/release/insarlab/PySolid?color=green)](https://github.com/insarlab/PySolid/releases)
-[![License](https://img.shields.io/badge/license-GPLv3+-yellow.svg)](https://github.com/insarlab/PySolid/blob/main/LICENSE)
-[![Citation](https://img.shields.io/badge/doi-10.1109%2FTGRS.2022.3168509-blue)](https://doi.org/10.1109/TGRS.2022.3168509)
+[![Language](https://img.shields.io/badge/python-3.8%2B-blue.svg?style=flat-square)](https://www.python.org/)
+[![CircleCI](https://img.shields.io/circleci/build/github/insarlab/PySolid.svg?logo=circleci&label=test&style=flat-square)](https://circleci.com/gh/insarlab/PySolid)
+[![Version](https://img.shields.io/github/v/release/insarlab/PySolid?color=brightgreen&label=version&style=flat-square)](https://github.com/insarlab/PySolid/releases)
+[![Conda Download](https://img.shields.io/conda/dn/conda-forge/pysolid?color=green&style=flat-square)](https://anaconda.org/conda-forge/pysolid)
+[![License](https://img.shields.io/badge/license-GPLv3+-yellow.svg?style=flat-square)](https://github.com/insarlab/PySolid/blob/main/LICENSE)
+[![Citation](https://img.shields.io/badge/doi-10.1109%2FTGRS.2022.3168509-blue?style=flat-square)](https://doi.org/10.1109/TGRS.2022.3168509)
 
 ## PySolid
 
-The Python based solid Earth tides (PySolid) is a thin Python wrapper of the [`solid.for`](http://geodesyworld.github.io/SOFTS/solid.htm) program (by Dennis Milbert based on [_dehanttideinelMJD.f_](https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel/) from V. Dehant, S. Mathews, J. Gipson and C. Bruyninx) to calculate [solid Earth tides](https://en.wikipedia.org/wiki/Earth_tide) in east/north/up direction (section 7.1.1 in the [2010 IERS Conventions](https://www.iers.org/IERS/EN/Publications/TechnicalNotes/tn36.html)). Solid Earth tides introduces very long spatial wavelength components in SAR/InSAR observations, as shown in the Sentinel-1 data with regular acquisitions and large swaths (Yunjun et al., 2022).
+The Python based solid Earth tides (PySolid) is a thin Python wrapper of the [`solid.for`](http://geodesyworld.github.io/SOFTS/solid.htm) program (by Dennis Milbert based on [_dehanttideinelMJD.f_](https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel/) from V. Dehant, S. Mathews, J. Gipson and C. Bruyninx) to calculate [solid Earth tides](https://en.wikipedia.org/wiki/Earth_tide) in east, north and up directions (section 7.1.1 in the [2010 IERS Conventions](https://www.iers.org/IERS/EN/Publications/TechnicalNotes/tn36.html)). Solid Earth tides introduce large offsets in SAR observations and long spatial wavelength ramps in InSAR observations, as shown in the Sentinel-1 data with regular acquisitions and large swaths ([Yunjun et al., 2022](https://doi.org/10.1109/TGRS.2022.3168509)).
 
 This is research code provided to you "as is" with NO WARRANTIES OF CORRECTNESS. Use at your own risk.
 
@@ -81,7 +82,7 @@ python PySolid/tests/point.py
 
 ### 2. Usage
 
-PySolid could compute solid Earth tides in two modes: **point** and **grid**. Both modes produce displacement in east, north and up direction.
+PySolid could compute solid Earth tides in two modes: **point** and **grid**. Both modes produce displacement in east, north and up directions.
 
 +   **Point mode:** compute 1D tides time-series at a specific point for a given time period
 +   **Grid mode:** compute 2D tides grid at a specific time for a given spatial grid
@@ -140,7 +141,7 @@ tide_e, tide_n, tide_u = pysolid.calc_solid_earth_tides_grid(
     verbose=True,
 )
 
-# project SET from ENU to radar line-of-sight (LOS) direction with positive for motion towards satellite
+# project SET from ENU to satellite line-of-sight (LOS) direction with positive for motion towards the satellite
 # inc_angle : incidence angle of the LOS vector (from ground to radar platform) measured from vertical.
 # az_angle  : azimuth   angle of the LOS vector (from ground to radar platform) measured from the north, with anti-clockwirse as positive.
 inc_angle = np.deg2rad(34)   # radian, typical value for Sentinel-1
