@@ -8,7 +8,6 @@
 ***     dependent subroutines can be download from IERS conventions website as:
 ***     wget -r -l1 --no-parent -R "index.html*" -nH --cut-dirs=3 https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel
 *** Z. Yunjun and S. Sangha, Sep 2020: modify solid() to solid_point/grid() as subroutines.
-
       subroutine solid_grid(iyr,imo,idy,ihh,imm,iss,
      * glad0,steplat,nlat,
      * glod0,steplon,nlon)
@@ -174,13 +173,14 @@
    99 end
 
 *-----------------------------------------------------------------------
-      subroutine solid_point(glad,glod,iyr,imo,idy,step_sec)
+      subroutine solid_point(glad,glod,iyr,imo,idy,step_sec,output)
 
 *** calculate SET at given location for one day with step_sec seconds resolution
 *** Arguments: glad/glod   - float, latitude/longitude in deg
 ***            iyr/imo/idy - int, start date/time in UTC
 ***            step_sec    - int, time step in seconds
-*** Returns:   seconds,  SET_east,  SET_north,  SET_up
+*** Returns:   output
+***            each row: seconds,  SET_east,  SET_north,  SET_up
 
       implicit double precision(a-h,o-z)
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
@@ -188,16 +188,13 @@
       integer iyr,imo,idy
       integer nloop, step_sec
       double precision tdel2
+      real(8), intent(out), dimension(60*60*24/step_sec,4) :: output
       !*** leap second table limit flag
       logical lflag
       common/stuff/rad,pi,pi2
       common/comgrs/a,e2
-
-*** open output file
-
-      lout=1
-      open(lout,file='solid.txt',form='formatted',status='unknown')
-      write(lout,'(a)') '# program solid -- UTC version -- 2018jun01'
+! f2py intent(in) glad,glod,iyr,imo,idy,nloop
+! f2py intent(out) output
 
 *** constants
 
@@ -213,34 +210,30 @@
 *** check inputs section
 
       if(glad.lt.-90.d0.or.glad.gt.90.d0) then
-        write(lout,'(a,G0.9)') 'ERROR: lat NOT in [-90,+90]:',glad
-        go to 98
+      print *, 'ERROR: lat NOT in [-90,+90]:',glad
+        return
       endif
 
       if(glod.lt.-360.d0.or.glod.gt.360.d0) then
-        write(lout,'(a,G0.9)') 'ERROR: lon NOT in [-360,+360]:',glod
-        go to 98
+      print *, 'ERROR: lon NOT in [-360,+360]:',glod
+        return
       endif
 
       if(iyr.lt.1901.or.iyr.gt.2099) then
-        write(lout,'(a,i5)') 'ERROR: year NOT in [1901-2099]:',iyr
-        go to 98
+        print *, 'ERROR: year NOT in [1901-2099]:',iyr
+        return
       endif
 
       if(imo.lt.1.or.imo.gt.12) then
-        write(lout,'(a,i3)') 'ERROR: month NOT in [1-12]:',imo
-        go to 98
+        print *, 'ERROR: month NOT in [1-12]:',imo
+        return
       endif
 
       if(idy.lt.1.or.idy.gt.31) then
-        write(lout,'(a,i3)') 'ERROR: day NOT in [1-31]:',idy
-        go to 98
+        print *, 'ERROR: day NOT in [1-31]:',idy
+        return
       endif
 
-*** output header
-
-      write(lout,'(a,i5,2i3)') '# year, month, day =',iyr,imo,idy
-      write(lout,'(a,2f15.9)') '# lat, lon =',glad,glod
 
 *** position of observing point (positive East)
 
@@ -268,11 +261,9 @@
 
 *** loop over time
 
-      !*** tdel2=1.d0/60.d0/24.d0
-      !*** do iloop=0,60*24
       nloop=60*60*24/step_sec
       tdel2=1.d0/DFLOAT(nloop)
-      do iloop=0,nloop
+      do iloop=1,nloop
         !*** false means flag not raised
         !*** mjd/fmjd in UTC
         !*** mjd/fmjd in UTC
@@ -292,9 +283,9 @@
 
         call mjdciv(mjd,fmjd,iyr,imo,idy,ihr,imn,sec)
 
-        !*** write output to file
         tsec=ihr*3600.d0+imn*60.d0+sec
-        write(lout,'((f8.1,:,",  "),*(f10.6,:,",  "))') tsec,vt,ut,wt
+
+        output(iloop, :) = [tsec,vt,ut,wt]
 
         !*** update fmjd for the next round
         fmjd=fmjd+tdel2
@@ -305,16 +296,12 @@
 *** end of processing and flag of leap second
 
       if(lflag) then
-        write(*,'(a)') 'Mild Warning -- time crossed leap second table'
-        write(*,'(a)') '  boundaries.  Boundary edge value used instead'
+        print *, 'Mild Warning -- time crossed leap second table'
+        print *, '  boundaries.  Boundary edge value used instead'
       endif
-      close(lout)
-
-      go to 99
-   98 write(*,'(a)') 'Check arguments.'
 
       return
-   99 end
+      end
 
 *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       subroutine detide(xsta,mjd,fmjd,xsun,xmon,dxtide,lflag)
