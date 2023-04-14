@@ -81,7 +81,7 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
 
     # Run twice to circumvent fortran bug which cuts off last file in loop - Simran, Jun 2020
     for _ in range(2):
-        solid_grid(dt_obj.year, dt_obj.month, dt_obj.day,
+        solid_grid(txt_file, dt_obj.year, dt_obj.month, dt_obj.day,
                    dt_obj.hour, dt_obj.minute, dt_obj.second,
                    lat0, lat_step, length-1,
                    lon0, lon_step, width-1)
