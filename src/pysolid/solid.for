@@ -9,14 +9,14 @@
 ***     wget -r -l1 --no-parent -R "index.html*" -nH --cut-dirs=3 https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel
 *** Z. Yunjun and S. Sangha, Sep 2020: modify solid() to solid_point/grid() as subroutines.
       subroutine solid_grid(iyr,imo,idy,ihh,imm,iss,
-     * glad0,steplat,nlat,
-     * glod0,steplon,nlon)
-
+     * glad0,steplat,nlat,glod0,steplon,nlon,output)
+ 
 *** calculate solid earth tides (SET) for one spatial grid given the date/time
 *** Arguments: iyr/imo/idy/ihh/imm/iss - int, date/time for YYYY/MM/DD/HH/MM/SS
 ***            glad0/glad1/steplat     - float, north(Y_FIRST)/south/step(negative) in deg
 ***            glod0/glod1/steplon     - float, west(X_FIRST) /east /step(positive) in deg
-*** Returns:   latitude,  longitude,  SET_east,  SET_north,  SET_up
+*** Returns:   output: 3D array with shape (nlat, nlon, 5)
+***            each depth slice: [SET_east,  SET_north,  SET_up]
 
       implicit double precision(a-h,o-z)
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
@@ -24,16 +24,14 @@
       integer nlat,nlon
       double precision glad0,steplat
       double precision glod0,steplon
+      real(8), intent(out), dimension(nlat,nlon,3) :: output
       !***^ leap second table limit flag
       logical lflag
       common/stuff/rad,pi,pi2
       common/comgrs/a,e2
-
-*** open output file
-
-      lout=1
-      open(lout,file='solid.txt',form='formatted',status='unknown')
-      write(lout,'(a)') '# program solid -- UTC version -- 2018jun01'
+! f2py intent(in) iyr,imo,idy,ihh,imm,iss,glad0,steplat,nlat,glod0,steplon,nlon
+! f2py dimension(nlat,nlon,3) output
+! f2py intent(out) output
 
 *** constants
 
@@ -49,43 +47,43 @@
 *** input section
 
       if(iyr.lt.1901.or.iyr.gt.2099) then
-        write(lout,'(a,i5)') 'ERROR: year NOT in [1901-2099]:',iyr
-        go to 98
+        print *, 'ERROR: year NOT in [1901-2099]:',iyr
+        return
       endif
 
       if(imo.lt.1.or.imo.gt.12) then
-        write(lout,'(a,i3)') 'ERROR: month NOT in [1-12]:',imo
-        go to 98
+        print *, 'ERROR: month NOT in [1-12]:',imo
+        return
       endif
 
       if(idy.lt.1.or.idy.gt.31) then
-        write(lout,'(a,i3)') 'ERROR: day NOT in [1-31]:',idy
-        go to 98
+        print *, 'ERROR: day NOT in [1-31]:',idy
+        return
       endif
 
       if(ihh.lt.0.or.ihh.gt.23) then
-        write(lout,'(a,i3)') 'ERROR: hour NOT in [0-23]:',ihh
-        go to 98
+        print *, 'ERROR: hour NOT in [0-23]:',ihh
+        return
       endif
 
       if(imm.lt.0.or.imm.gt.59) then
-        write(lout,'(a,i3)') 'ERROR: minute NOT in [0-59]:',imm
-        go to 98
+        print *, 'ERROR: minute NOT in [0-59]:',imm
+        return
       endif
 
       if(iss.lt.0.or.iss.gt.59) then
-        write(lout,'(a,i3)') 'ERROR: second NOT in [0-59]:',iss
-        go to 98
+        print *, 'ERROR: second NOT in [0-59]:',iss
+        return
       endif
 
       if(glad0.lt.-90.d0.or.glad0.gt.90.d0) then
-        write(lout,'(a,G0.9)') 'ERROR: lat0 NOT in [-90,+90]:',glad0
-        go to 98
+        print *, 'ERROR: lat0 NOT in [-90,+90]:',glad0
+        return
       endif
 
       if(glod0.lt.-360.d0.or.glod0.gt.360.d0) then
-        write(lout,'(a,G0.9)') 'ERROR: lon0 NOT in [-360,+360]',glod0
-        go to 98
+        print *, 'ERROR: lon0 NOT in [-360,+360]',glod0
+        return
       endif
 
 *** output header
@@ -93,19 +91,13 @@
       glad1=glad0+nlat*steplat
       glod1=glod0+nlon*steplon
 
-      write(lout,'(a,i5,2i3)') '# year, month, day =',iyr,imo,idy
-      write(lout,'(a,3i3)') '# hour, minute, second =',ihh,imm,iss
-      write(lout,'(a,4f15.9)') '# S, N, W, E =',glad1,glad0,glod0,glod1
-      write(lout,'(a,f15.9,i6)') '# step_lat, num_lat =',steplat,nlat
-      write(lout,'(a,f15.9,i6)') '# step_lon, num_lon =',steplon,nlon
-
 *** loop over the grid
 
-      do ilat=0,nlat
-        do ilon=0,nlon
+      do ilat=1,nlat
+        do ilon=1,nlon
 
-        glad=glad0+ilat*steplat
-        glod=glod0+ilon*steplon
+        glad = glad0 + (ilat-1)*steplat
+        glod = glod0 + (ilon-1)*steplon
 
 *** position of observing point (positive East)
 
@@ -153,7 +145,7 @@
      *              iyr,imo,idy,ihr,imn,sec-0.001d0)
 
         !*** write output to file
-        write(lout,'(*(G0.9,:,",  "))') glad,glod,vt,ut,wt
+        output(ilat, ilon, :) = [vt, ut, wt]
 
         enddo
       enddo
@@ -161,16 +153,13 @@
 *** end of processing and flag for leap second
 
       if(lflag) then
-        write(*,'(a)') 'Mild Warning -- time crossed leap second table'
-        write(*,'(a)') '  boundaries.  Boundary edge value used instead'
+        print *, 'Mild Warning -- time crossed leap second table'
+        print *, '  boundaries.  Boundary edge value used instead'
       endif
-      close(lout)
 
-      go to 99
-   98 write(*,'(a)') 'Check arguments.'
 
       return
-   99 end
+      end
 
 *-----------------------------------------------------------------------
       subroutine solid_point(glad,glod,iyr,imo,idy,step_sec,output)
@@ -180,7 +169,7 @@
 ***            iyr/imo/idy - int, start date/time in UTC
 ***            step_sec    - int, time step in seconds
 *** Returns:   output
-***            each row: seconds,  SET_east,  SET_north,  SET_up
+***            each row: [seconds,  SET_east,  SET_north,  SET_up]
 
       implicit double precision(a-h,o-z)
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
@@ -193,7 +182,7 @@
       logical lflag
       common/stuff/rad,pi,pi2
       common/comgrs/a,e2
-! f2py intent(in) glad,glod,iyr,imo,idy,nloop
+! f2py intent(in) glad,glod,iyr,imo,idy,step_sec
 ! f2py intent(out) output
 
 *** constants
@@ -285,7 +274,7 @@
 
         tsec=ihr*3600.d0+imn*60.d0+sec
 
-        output(iloop, :) = [tsec,vt,ut,wt]
+        output(iloop, :) = [tsec, vt, ut, wt]
 
         !*** update fmjd for the next round
         fmjd=fmjd+tdel2
