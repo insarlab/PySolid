@@ -9,7 +9,7 @@
 ***     wget -r -l1 --no-parent -R "index.html*" -nH --cut-dirs=3 https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel
 *** Z. Yunjun and S. Sangha, Sep 2020: modify solid() to solid_point/grid() as subroutines.
 
-      subroutine solid_grid(iyr,imo,idy,ihh,imm,iss,
+      subroutine solid_grid(txt_file,iyr,imo,idy,ihh,imm,iss,
      * glad0,steplat,nlat,
      * glod0,steplon,nlon)
 
@@ -20,6 +20,7 @@
 *** Returns:   latitude,  longitude,  SET_east,  SET_north,  SET_up
 
       implicit double precision(a-h,o-z)
+      character(len=*), intent(in) :: txt_file
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
       integer iyr,imo,idy,ihh,imm,iss
       integer nlat,nlon
@@ -33,7 +34,7 @@
 *** open output file
 
       lout=1
-      open(lout,file='solid.txt',form='formatted',status='unknown')
+      open(lout,file=txt_file,form='formatted',status='unknown')
       write(lout,'(a)') '# program solid -- UTC version -- 2018jun01'
 
 *** constants
@@ -174,15 +175,17 @@
    99 end
 
 *-----------------------------------------------------------------------
-      subroutine solid_point(glad,glod,iyr,imo,idy,step_sec)
+      subroutine solid_point(txt_file,glad,glod,iyr,imo,idy,step_sec)
 
 *** calculate SET at given location for one day with step_sec seconds resolution
-*** Arguments: glad/glod   - float, latitude/longitude in deg
+*** Arguments: txt_file    - string, output file name
+***            glad/glod   - float, latitude/longitude in deg
 ***            iyr/imo/idy - int, start date/time in UTC
 ***            step_sec    - int, time step in seconds
 *** Returns:   seconds,  SET_east,  SET_north,  SET_up
 
       implicit double precision(a-h,o-z)
+      character(len=*), intent(in) :: txt_file
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
       double precision glad,glod
       integer iyr,imo,idy
@@ -196,7 +199,7 @@
 *** open output file
 
       lout=1
-      open(lout,file='solid.txt',form='formatted',status='unknown')
+      open(lout,file=txt_file,form='formatted',status='unknown')
       write(lout,'(a)') '# program solid -- UTC version -- 2018jun01'
 
 *** constants

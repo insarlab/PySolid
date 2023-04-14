@@ -11,8 +11,8 @@
 #   pysolid.calc_solid_earth_tides_grid()
 
 
-import datetime as dt
 import os
+import tempfile
 
 import numpy as np
 from skimage.transform import resize
@@ -74,9 +74,8 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
         s=(length, width), la=lat_step, lo=lon_step))
 
     ## calc solid Earth tides and write to text file
-    txt_file = os.path.abspath('solid.txt')
-    if os.path.isfile(txt_file):
-        os.remove(txt_file)
+    fp = tempfile.NamedTemporaryFile(prefix="pysolid_", suffix='.txt')
+    txt_file = fp.name
 
     vprint('SOLID  : calculating / writing data to txt file: {}'.format(txt_file))
 
@@ -101,7 +100,7 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
     tide_u = fc[:, 2].reshape(length, width)
 
     # remove the temporary text file
-    os.remove(txt_file)
+    fp.close()
 
     # resample to the input size
     if num_step > 1:

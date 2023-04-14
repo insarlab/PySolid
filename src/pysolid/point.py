@@ -14,6 +14,7 @@
 import collections
 import datetime as dt
 import os
+import tempfile
 
 import numpy as np
 from matplotlib import pyplot as plt, ticker, dates as mdates
@@ -170,14 +171,14 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
         raise ImportError(msg)
 
     ## calc solid Earth tides and write to text file
-    txt_file = os.path.abspath('solid.txt')
-    if os.path.isfile(txt_file):
-        os.remove(txt_file)
+    # create a temporary text file so it doesn't get overwritten by competing processes
+    fp = tempfile.NamedTemporaryFile(prefix="pysolid_", mode='w')
+    txt_file = fp.name
 
     # Run twice to circumvent fortran bug which cuts off last file in loop - Simran, Jun 2020
     t = dt.datetime.strptime(date_str, '%Y%m%d')
     for _ in range(2):
-        solid_point(lat, lon, t.year, t.month, t.day, step_sec)
+        solid_point(txt_file, lat, lon, t.year, t.month, t.day, step_sec)
 
     ## read data from text file
     num_row = int(24 * 60 * 60 / step_sec)
@@ -196,7 +197,7 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
     dt_out = np.array(dt_out)
 
     # remove the temporary text file
-    os.remove(txt_file)
+    fp.close()
 
     return dt_out, tide_e, tide_n, tide_u
 
