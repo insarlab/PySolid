@@ -170,7 +170,6 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
         raise ImportError(msg)
 
     # calc solid Earth tides
-    # Run twice to circumvent fortran bug which cuts off last file in loop - Simran, Jun 2020
     t = dt.datetime.strptime(date_str, '%Y%m%d')
     fc = solid_point(lat, lon, t.year, t.month, t.day, step_sec)
 

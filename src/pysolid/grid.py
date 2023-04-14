@@ -74,7 +74,6 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
         s=(length, width), la=lat_step, lo=lon_step))
 
     ## calc solid Earth tides
-    # Run twice to circumvent fortran bug which cuts off last file in loop - Simran, Jun 2020
     fc = solid_grid(dt_obj.year, dt_obj.month, dt_obj.day,
                     dt_obj.hour, dt_obj.minute, dt_obj.second,
                     lat0, lat_step, length,
@@ -83,8 +82,6 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
     tide_e = fc[:, :, 0].reshape(length, width)
     tide_n = fc[:, :, 1].reshape(length, width)
     tide_u = fc[:, :, 2].reshape(length, width)
-
-    np.save('fc_grid_arr.npy', fc)
 
     # resample to the input size
     if num_step > 1:
