@@ -14,7 +14,8 @@
      * glod0,steplon,nlon)
 
 *** calculate solid earth tides (SET) for one spatial grid given the date/time
-*** Arguments: iyr/imo/idy/ihh/imm/iss - int, date/time for YYYY/MM/DD/HH/MM/SS
+*** Arguments: txt_file                - string, output file name
+***            iyr/imo/idy/ihh/imm/iss - int, date/time for YYYY/MM/DD/HH/MM/SS
 ***            glad0/glad1/steplat     - float, north(Y_FIRST)/south/step(negative) in deg
 ***            glod0/glod1/steplon     - float, west(X_FIRST) /east /step(positive) in deg
 *** Returns:   latitude,  longitude,  SET_east,  SET_north,  SET_up
