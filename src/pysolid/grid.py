@@ -11,7 +11,6 @@
 #   pysolid.calc_solid_earth_tides_grid()
 
 
-import datetime as dt
 import os
 
 import numpy as np
