@@ -11,8 +11,8 @@
 #   pysolid.calc_solid_earth_tides_grid()
 
 
+import datetime as dt
 import os
-import tempfile
 
 import numpy as np
 from skimage.transform import resize

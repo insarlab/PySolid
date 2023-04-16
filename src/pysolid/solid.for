@@ -10,17 +10,15 @@
 *** Z. Yunjun and S. Sangha, Sep 2020: modify solid() to solid_point/grid() as subroutines.
       subroutine solid_grid(iyr,imo,idy,ihh,imm,iss,
      * glad0,steplat,nlat,glod0,steplon,nlon,output)
-
+ 
 *** calculate solid earth tides (SET) for one spatial grid given the date/time
-*** Arguments: txt_file                - string, output file name
-***            iyr/imo/idy/ihh/imm/iss - int, date/time for YYYY/MM/DD/HH/MM/SS
+*** Arguments: iyr/imo/idy/ihh/imm/iss - int, date/time for YYYY/MM/DD/HH/MM/SS
 ***            glad0/glad1/steplat     - float, north(Y_FIRST)/south/step(negative) in deg
 ***            glod0/glod1/steplon     - float, west(X_FIRST) /east /step(positive) in deg
 *** Returns:   output: 3D array with shape (nlat, nlon, 5)
 ***            each depth slice: [SET_east,  SET_north,  SET_up]
 
       implicit double precision(a-h,o-z)
-      character(len=*), intent(in) :: txt_file
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
       integer iyr,imo,idy,ihh,imm,iss
       integer nlat,nlon
@@ -167,15 +165,13 @@
       subroutine solid_point(glad,glod,iyr,imo,idy,step_sec,output)
 
 *** calculate SET at given location for one day with step_sec seconds resolution
-*** Arguments: txt_file    - string, output file name
-***            glad/glod   - float, latitude/longitude in deg
+*** Arguments: glad/glod   - float, latitude/longitude in deg
 ***            iyr/imo/idy - int, start date/time in UTC
 ***            step_sec    - int, time step in seconds
 *** Returns:   output
 ***            each row: [seconds,  SET_east,  SET_north,  SET_up]
 
       implicit double precision(a-h,o-z)
-      character(len=*), intent(in) :: txt_file
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
       double precision glad,glod
       integer iyr,imo,idy
