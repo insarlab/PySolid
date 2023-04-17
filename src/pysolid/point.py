@@ -171,13 +171,10 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
 
     # calc solid Earth tides
     t = dt.datetime.strptime(date_str, '%Y%m%d')
-    fc = solid_point(lat, lon, t.year, t.month, t.day, step_sec)
+    secs, tide_e, tide_n, tide_u  = solid_point(
+        lat, lon, t.year, t.month, t.day, step_sec
+    )
 
-    tide_e = fc[:, 1].flatten()
-    tide_n = fc[:, 2].flatten()
-    tide_u = fc[:, 3].flatten()
-
-    secs   = fc[:, 0].flatten()
     dt_out = [t + dt.timedelta(seconds=sec) for sec in secs]
     dt_out = np.array(dt_out)
 

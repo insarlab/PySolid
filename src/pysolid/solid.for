@@ -9,14 +9,15 @@
 ***     wget -r -l1 --no-parent -R "index.html*" -nH --cut-dirs=3 https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel
 *** Z. Yunjun and S. Sangha, Sep 2020: modify solid() to solid_point/grid() as subroutines.
       subroutine solid_grid(iyr,imo,idy,ihh,imm,iss,
-     * glad0,steplat,nlat,glod0,steplon,nlon,output)
+     * glad0,steplat,nlat,glod0,steplon,nlon,set_east,set_north,set_up)
  
 *** calculate solid earth tides (SET) for one spatial grid given the date/time
 *** Arguments: iyr/imo/idy/ihh/imm/iss - int, date/time for YYYY/MM/DD/HH/MM/SS
 ***            glad0/glad1/steplat     - float, north(Y_FIRST)/south/step(negative) in deg
 ***            glod0/glod1/steplon     - float, west(X_FIRST) /east /step(positive) in deg
-*** Returns:   output: 3D array with shape (nlat, nlon, 5)
-***            each depth slice: [SET_east,  SET_north,  SET_up]
+*** Returns:   set_east                - float, east component of SET in m
+***            set_north               - float, north component of SET in m
+***            set_up                  - float, up component of SET in m
 
       implicit double precision(a-h,o-z)
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
@@ -24,14 +25,15 @@
       integer nlat,nlon
       double precision glad0,steplat
       double precision glod0,steplon
-      real(8), intent(out), dimension(nlat,nlon,3) :: output
+      real(8), intent(out), dimension(nlat,nlon) :: set_east
+      real(8), intent(out), dimension(nlat,nlon) :: set_north
+      real(8), intent(out), dimension(nlat,nlon) :: set_up
       !***^ leap second table limit flag
       logical lflag
       common/stuff/rad,pi,pi2
       common/comgrs/a,e2
 ! f2py intent(in) iyr,imo,idy,ihh,imm,iss,glad0,steplat,nlat,glod0,steplon,nlon
-! f2py dimension(nlat,nlon,3) output
-! f2py intent(out) output
+! f2py intent(out) set_east,set_north,set_up
 
 *** constants
 
@@ -85,8 +87,6 @@
         print *, 'ERROR: lon0 NOT in [-360,+360]',glod0
         return
       endif
-
-*** output header
 
       glad1=glad0+nlat*steplat
       glod1=glod0+nlon*steplon
@@ -144,8 +144,10 @@
         call mjdciv(mjd,fmjd               +0.001d0/86400.d0,
      *              iyr,imo,idy,ihr,imn,sec-0.001d0)
 
-        !*** write output to file
-        output(ilat, ilon, :) = [vt, ut, wt]
+        !*** write output respective arrays
+        set_east(ilat, ilon) = vt
+        set_north(ilat, ilon) = ut
+        set_up(ilat, ilon) = wt
 
         enddo
       enddo
@@ -162,14 +164,17 @@
       end
 
 *-----------------------------------------------------------------------
-      subroutine solid_point(glad,glod,iyr,imo,idy,step_sec,output)
+      subroutine solid_point(glad,glod,iyr,imo,idy,step_sec,
+     * out_seconds,set_east,set_north,set_up)
 
 *** calculate SET at given location for one day with step_sec seconds resolution
 *** Arguments: glad/glod   - float, latitude/longitude in deg
 ***            iyr/imo/idy - int, start date/time in UTC
 ***            step_sec    - int, time step in seconds
-*** Returns:   output
-***            each row: [seconds,  SET_east,  SET_north,  SET_up]
+*** Returns:   out_seconds - float, seconds since start
+***            set_east    - float, east component of SET
+***            set_north   - float, north component of SET
+***            set_up      - float, up component of SET
 
       implicit double precision(a-h,o-z)
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
@@ -177,13 +182,16 @@
       integer iyr,imo,idy
       integer nloop, step_sec
       double precision tdel2
-      real(8), intent(out), dimension(60*60*24/step_sec,4) :: output
+      real(8), intent(out), dimension(60*60*24/step_sec) :: out_seconds
+      real(8), intent(out), dimension(60*60*24/step_sec) :: set_east
+      real(8), intent(out), dimension(60*60*24/step_sec) :: set_north
+      real(8), intent(out), dimension(60*60*24/step_sec) :: set_up
       !*** leap second table limit flag
       logical lflag
       common/stuff/rad,pi,pi2
       common/comgrs/a,e2
 ! f2py intent(in) glad,glod,iyr,imo,idy,step_sec
-! f2py intent(out) output
+! f2py intent(out) out_seconds,set_east,set_north,set_up
 
 *** constants
 
@@ -274,7 +282,10 @@
 
         tsec=ihr*3600.d0+imn*60.d0+sec
 
-        output(iloop, :) = [tsec, vt, ut, wt]
+        out_seconds(iloop) = tsec
+        set_east(iloop) = vt
+        set_north(iloop) = ut
+        set_up(iloop) = wt
 
         !*** update fmjd for the next round
         fmjd=fmjd+tdel2
