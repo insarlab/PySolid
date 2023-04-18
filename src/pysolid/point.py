@@ -14,7 +14,6 @@
 import collections
 import datetime as dt
 import os
-import tempfile
 
 import numpy as np
 from matplotlib import pyplot as plt, ticker, dates as mdates
@@ -170,29 +169,12 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
         msg += '\n    Check instruction at: https://github.com/insarlab/PySolid.'
         raise ImportError(msg)
 
-    ## calc solid Earth tides and write to text file
+    # calc solid Earth tides
+    t = dt.datetime.strptime(date_str, '%Y%m%d')
+    secs, tide_e, tide_n, tide_u  = solid_point(
+        lat, lon, t.year, t.month, t.day, step_sec
+    )
 
-    # create a temporary text file so it doesn't get overwritten by competing processes
-    with tempfile.NamedTemporaryFile(prefix="pysolid_", suffix=".txt") as fp:
-        # Run twice to circumvent fortran bug which cuts off last file in loop
-        # - Simran, Jun 2020
-        t = dt.datetime.strptime(date_str, '%Y%m%d')
-        for _ in range(2):
-            solid_point(fp.name, lat, lon, t.year, t.month, t.day, step_sec)
-
-        ## read data from text file
-        num_row = int(24 * 60 * 60 / step_sec)
-        fc = np.loadtxt(fp.name,
-                        dtype=float,
-                        delimiter=',',
-                        skiprows=0,
-                        max_rows=num_row)
-
-    tide_e = fc[:, 1].flatten()
-    tide_n = fc[:, 2].flatten()
-    tide_u = fc[:, 3].flatten()
-
-    secs   = fc[:, 0].flatten()
     dt_out = [t + dt.timedelta(seconds=sec) for sec in secs]
     dt_out = np.array(dt_out)
 

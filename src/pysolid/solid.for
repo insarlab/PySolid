@@ -7,36 +7,33 @@
 ***     J. Gipson and C. Bruyninx. The latest version of dehanttideinel.f and its 
 ***     dependent subroutines can be download from IERS conventions website as:
 ***     wget -r -l1 --no-parent -R "index.html*" -nH --cut-dirs=3 https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel
-*** Z. Yunjun and S. Sangha, Sep 2020: modify solid() to solid_point/grid() as subroutines.
+*** Sep 2020: modify solid() to solid_point/grid() as subroutines, Z. Yunjun and S. Sangha.
+*** Apr 2023: return numpy arrays instead of writing txt file, S. Staniewicz.
 
-      subroutine solid_grid(txt_file,iyr,imo,idy,ihh,imm,iss,
-     * glad0,steplat,nlat,
-     * glod0,steplon,nlon)
-
+      subroutine solid_grid(iyr,imo,idy,ihh,imm,iss,
+     * glad0,steplat,nlat,glod0,steplon,nlon,tide_e,tide_n,tide_u)
+ 
 *** calculate solid earth tides (SET) for one spatial grid given the date/time
-*** Arguments: txt_file                - string, output file name
-***            iyr/imo/idy/ihh/imm/iss - int, date/time for YYYY/MM/DD/HH/MM/SS
+*** Arguments: iyr/imo/idy/ihh/imm/iss - int, date/time for YYYY/MM/DD/HH/MM/SS
 ***            glad0/glad1/steplat     - float, north(Y_FIRST)/south/step(negative) in deg
-***            glod0/glod1/steplon     - float, west(X_FIRST) /east /step(positive) in deg
-*** Returns:   latitude,  longitude,  SET_east,  SET_north,  SET_up
+***            glod0/glod1/steplon     - float, west (X_FIRST)/east /step(positive) in deg
+*** Returns:   tide_e/tide_n/tide_u    - 2D np.ndarray, east/north/up component of SET in m
 
       implicit double precision(a-h,o-z)
-      character(len=*), intent(in) :: txt_file
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
       integer iyr,imo,idy,ihh,imm,iss
       integer nlat,nlon
       double precision glad0,steplat
       double precision glod0,steplon
+      real(8), intent(out), dimension(nlat,nlon) :: tide_e
+      real(8), intent(out), dimension(nlat,nlon) :: tide_n
+      real(8), intent(out), dimension(nlat,nlon) :: tide_u
       !***^ leap second table limit flag
       logical lflag
       common/stuff/rad,pi,pi2
       common/comgrs/a,e2
-
-*** open output file
-
-      lout=1
-      open(lout,file=txt_file,form='formatted',status='unknown')
-      write(lout,'(a)') '# program solid -- UTC version -- 2018jun01'
+      !f2py intent(in) iyr,imo,idy,ihh,imm,iss,glad0,steplat,nlat,glod0,steplon,nlon
+      !f2py intent(out) tide_e,tide_n,tide_u
 
 *** constants
 
@@ -52,63 +49,55 @@
 *** input section
 
       if(iyr.lt.1901.or.iyr.gt.2099) then
-        write(lout,'(a,i5)') 'ERROR: year NOT in [1901-2099]:',iyr
-        go to 98
+        print *, 'ERROR: year NOT in [1901-2099]:',iyr
+        return
       endif
 
       if(imo.lt.1.or.imo.gt.12) then
-        write(lout,'(a,i3)') 'ERROR: month NOT in [1-12]:',imo
-        go to 98
+        print *, 'ERROR: month NOT in [1-12]:',imo
+        return
       endif
 
       if(idy.lt.1.or.idy.gt.31) then
-        write(lout,'(a,i3)') 'ERROR: day NOT in [1-31]:',idy
-        go to 98
+        print *, 'ERROR: day NOT in [1-31]:',idy
+        return
       endif
 
       if(ihh.lt.0.or.ihh.gt.23) then
-        write(lout,'(a,i3)') 'ERROR: hour NOT in [0-23]:',ihh
-        go to 98
+        print *, 'ERROR: hour NOT in [0-23]:',ihh
+        return
       endif
 
       if(imm.lt.0.or.imm.gt.59) then
-        write(lout,'(a,i3)') 'ERROR: minute NOT in [0-59]:',imm
-        go to 98
+        print *, 'ERROR: minute NOT in [0-59]:',imm
+        return
       endif
 
       if(iss.lt.0.or.iss.gt.59) then
-        write(lout,'(a,i3)') 'ERROR: second NOT in [0-59]:',iss
-        go to 98
+        print *, 'ERROR: second NOT in [0-59]:',iss
+        return
       endif
 
       if(glad0.lt.-90.d0.or.glad0.gt.90.d0) then
-        write(lout,'(a,G0.9)') 'ERROR: lat0 NOT in [-90,+90]:',glad0
-        go to 98
+        print *, 'ERROR: lat0 NOT in [-90,+90]:',glad0
+        return
       endif
 
       if(glod0.lt.-360.d0.or.glod0.gt.360.d0) then
-        write(lout,'(a,G0.9)') 'ERROR: lon0 NOT in [-360,+360]',glod0
-        go to 98
+        print *, 'ERROR: lon0 NOT in [-360,+360]',glod0
+        return
       endif
-
-*** output header
 
       glad1=glad0+nlat*steplat
       glod1=glod0+nlon*steplon
 
-      write(lout,'(a,i5,2i3)') '# year, month, day =',iyr,imo,idy
-      write(lout,'(a,3i3)') '# hour, minute, second =',ihh,imm,iss
-      write(lout,'(a,4f15.9)') '# S, N, W, E =',glad1,glad0,glod0,glod1
-      write(lout,'(a,f15.9,i6)') '# step_lat, num_lat =',steplat,nlat
-      write(lout,'(a,f15.9,i6)') '# step_lon, num_lon =',steplon,nlon
-
 *** loop over the grid
 
-      do ilat=0,nlat
-        do ilon=0,nlon
+      do ilat=1,nlat
+        do ilon=1,nlon
 
-        glad=glad0+ilat*steplat
-        glod=glod0+ilon*steplon
+        glad = glad0 + (ilat-1)*steplat
+        glod = glod0 + (ilon-1)*steplon
 
 *** position of observing point (positive East)
 
@@ -155,8 +144,10 @@
         call mjdciv(mjd,fmjd               +0.001d0/86400.d0,
      *              iyr,imo,idy,ihr,imn,sec-0.001d0)
 
-        !*** write output to file
-        write(lout,'(*(G0.9,:,",  "))') glad,glod,vt,ut,wt
+        !*** write output respective arrays
+        tide_e(ilat, ilon) = vt
+        tide_n(ilat, ilon) = ut
+        tide_u(ilat, ilon) = wt
 
         enddo
       enddo
@@ -164,44 +155,41 @@
 *** end of processing and flag for leap second
 
       if(lflag) then
-        write(*,'(a)') 'Mild Warning -- time crossed leap second table'
-        write(*,'(a)') '  boundaries.  Boundary edge value used instead'
+        print *, 'Mild Warning -- time crossed leap second table'
+        print *, '  boundaries.  Boundary edge value used instead'
       endif
-      close(lout)
 
-      go to 99
-   98 write(*,'(a)') 'Check arguments.'
 
       return
-   99 end
+      end
 
 *-----------------------------------------------------------------------
-      subroutine solid_point(txt_file,glad,glod,iyr,imo,idy,step_sec)
+      subroutine solid_point(glad,glod,iyr,imo,idy,step_sec,
+     * secs,tide_e,tide_n,tide_u)
 
 *** calculate SET at given location for one day with step_sec seconds resolution
-*** Arguments: txt_file    - string, output file name
-***            glad/glod   - float, latitude/longitude in deg
-***            iyr/imo/idy - int, start date/time in UTC
-***            step_sec    - int, time step in seconds
-*** Returns:   seconds,  SET_east,  SET_north,  SET_up
+*** Arguments: glad/glod            - float, latitude/longitude in deg
+***            iyr/imo/idy          - int, start date/time in UTC
+***            step_sec             - int, time step in seconds
+*** Returns:   secs                 - 1D np.ndarray, seconds since start
+***            tide_e/tide_n/tide_u - 1D np.ndarray, east/north/up component of SET in m
 
       implicit double precision(a-h,o-z)
-      character(len=*), intent(in) :: txt_file
       dimension rsun(3),rmoon(3),etide(3),xsta(3)
       double precision glad,glod
       integer iyr,imo,idy
       integer nloop, step_sec
       double precision tdel2
+      real(8), intent(out), dimension(60*60*24/step_sec) :: secs
+      real(8), intent(out), dimension(60*60*24/step_sec) :: tide_e
+      real(8), intent(out), dimension(60*60*24/step_sec) :: tide_n
+      real(8), intent(out), dimension(60*60*24/step_sec) :: tide_u
       !*** leap second table limit flag
       logical lflag
       common/stuff/rad,pi,pi2
       common/comgrs/a,e2
-
-*** open output file
-
-      lout=1
-      open(lout,file=txt_file,form='formatted',status='unknown')
-      write(lout,'(a)') '# program solid -- UTC version -- 2018jun01'
+      !f2py intent(in) glad,glod,iyr,imo,idy,step_sec
+      !f2py intent(out) secs,tide_e,tide_n,tide_u
 
 *** constants
 
@@ -217,34 +205,30 @@
 *** check inputs section
 
       if(glad.lt.-90.d0.or.glad.gt.90.d0) then
-        write(lout,'(a,G0.9)') 'ERROR: lat NOT in [-90,+90]:',glad
-        go to 98
+        print *, 'ERROR: lat NOT in [-90,+90]:',glad
+        return
       endif
 
       if(glod.lt.-360.d0.or.glod.gt.360.d0) then
-        write(lout,'(a,G0.9)') 'ERROR: lon NOT in [-360,+360]:',glod
-        go to 98
+        print *, 'ERROR: lon NOT in [-360,+360]:',glod
+        return
       endif
 
       if(iyr.lt.1901.or.iyr.gt.2099) then
-        write(lout,'(a,i5)') 'ERROR: year NOT in [1901-2099]:',iyr
-        go to 98
+        print *, 'ERROR: year NOT in [1901-2099]:',iyr
+        return
       endif
 
       if(imo.lt.1.or.imo.gt.12) then
-        write(lout,'(a,i3)') 'ERROR: month NOT in [1-12]:',imo
-        go to 98
+        print *, 'ERROR: month NOT in [1-12]:',imo
+        return
       endif
 
       if(idy.lt.1.or.idy.gt.31) then
-        write(lout,'(a,i3)') 'ERROR: day NOT in [1-31]:',idy
-        go to 98
+        print *, 'ERROR: day NOT in [1-31]:',idy
+        return
       endif
 
-*** output header
-
-      write(lout,'(a,i5,2i3)') '# year, month, day =',iyr,imo,idy
-      write(lout,'(a,2f15.9)') '# lat, lon =',glad,glod
 
 *** position of observing point (positive East)
 
@@ -272,11 +256,9 @@
 
 *** loop over time
 
-      !*** tdel2=1.d0/60.d0/24.d0
-      !*** do iloop=0,60*24
       nloop=60*60*24/step_sec
       tdel2=1.d0/DFLOAT(nloop)
-      do iloop=0,nloop
+      do iloop=1,nloop
         !*** false means flag not raised
         !*** mjd/fmjd in UTC
         !*** mjd/fmjd in UTC
@@ -296,9 +278,12 @@
 
         call mjdciv(mjd,fmjd,iyr,imo,idy,ihr,imn,sec)
 
-        !*** write output to file
         tsec=ihr*3600.d0+imn*60.d0+sec
-        write(lout,'((f8.1,:,",  "),*(f10.6,:,",  "))') tsec,vt,ut,wt
+
+        secs(iloop) = tsec
+        tide_e(iloop) = vt
+        tide_n(iloop) = ut
+        tide_u(iloop) = wt
 
         !*** update fmjd for the next round
         fmjd=fmjd+tdel2
@@ -309,16 +294,12 @@
 *** end of processing and flag of leap second
 
       if(lflag) then
-        write(*,'(a)') 'Mild Warning -- time crossed leap second table'
-        write(*,'(a)') '  boundaries.  Boundary edge value used instead'
+        print *, 'Mild Warning -- time crossed leap second table'
+        print *, '  boundaries.  Boundary edge value used instead'
       endif
-      close(lout)
-
-      go to 99
-   98 write(*,'(a)') 'Check arguments.'
 
       return
-   99 end
+      end
 
 *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       subroutine detide(xsta,mjd,fmjd,xsun,xmon,dxtide,lflag)

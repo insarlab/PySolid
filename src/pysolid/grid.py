@@ -12,7 +12,6 @@
 
 
 import os
-import tempfile
 
 import numpy as np
 from skimage.transform import resize
@@ -73,31 +72,11 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
     vprint('SOLID  : shape: {s}, step size: {la:.4f} by {lo:.4f} deg'.format(
         s=(length, width), la=lat_step, lo=lon_step))
 
-    ## calc solid Earth tides and write to text file
-    with tempfile.NamedTemporaryFile(prefix="pysolid_", suffix=".txt") as fp:
-        vprint('SOLID  : calculating / writing data to txt file: {}'.format(fp.name))
-
-        # Run twice to circumvent fortran bug which cuts off last file in loop
-        # - Simran, Jun 2020
-        for _ in range(2):
-            solid_grid(fp.name, dt_obj.year, dt_obj.month, dt_obj.day,
-                       dt_obj.hour, dt_obj.minute, dt_obj.second,
-                       lat0, lat_step, length - 1,
-                       lon0, lon_step, width - 1)
-
-        ## read data from text file
-        vprint('PYSOLID: read data from text file: {}'.format(fp.name))
-        grid_size = int(length * width)
-        fc = np.loadtxt(fp.name,
-                        dtype=float,
-                        usecols=(2,3,4),
-                        delimiter=',',
-                        skiprows=0,
-                        max_rows=grid_size+100)[:grid_size]
-
-    tide_e = fc[:, 0].reshape(length, width)
-    tide_n = fc[:, 1].reshape(length, width)
-    tide_u = fc[:, 2].reshape(length, width)
+    ## calc solid Earth tides
+    tide_e, tide_n, tide_u = solid_grid(dt_obj.year, dt_obj.month, dt_obj.day,
+                                        dt_obj.hour, dt_obj.minute, dt_obj.second,
+                                        lat0, lat_step, length,
+                                        lon0, lon_step, width)
 
     # resample to the input size
     if num_step > 1:
