@@ -1,9 +1,9 @@
 [![Language](https://img.shields.io/badge/python-3.8%2B-blue.svg?style=flat-square)](https://www.python.org/)
-[![CircleCI](https://img.shields.io/circleci/build/github/insarlab/PySolid.svg?logo=circleci&label=test&style=flat-square)](https://circleci.com/gh/insarlab/PySolid)
-[![Version](https://img.shields.io/github/v/release/insarlab/PySolid?color=brightgreen&label=version&style=flat-square)](https://github.com/insarlab/PySolid/releases)
-[![Conda Download](https://img.shields.io/conda/dn/conda-forge/pysolid?color=green&style=flat-square)](https://anaconda.org/conda-forge/pysolid)
-[![License](https://img.shields.io/badge/license-GPLv3+-yellow.svg?style=flat-square)](https://github.com/insarlab/PySolid/blob/main/LICENSE)
-[![Citation](https://img.shields.io/badge/doi-10.1109%2FTGRS.2022.3168509-blue?style=flat-square)](https://doi.org/10.1109/TGRS.2022.3168509)
+[![CircleCI](https://img.shields.io/circleci/build/github/insarlab/PySolid.svg?logo=circleci&label=tests&style=flat-square)](https://circleci.com/gh/insarlab/PySolid)
+[![Conda Download](https://img.shields.io/conda/dn/conda-forge/pysolid?color=green&label=conda%20downloads&style=flat-square)](https://anaconda.org/conda-forge/pysolid)
+[![Version](https://img.shields.io/github/v/release/insarlab/PySolid?color=yellow&label=version&style=flat-square)](https://github.com/insarlab/PySolid/releases)
+[![License](https://img.shields.io/badge/license-GPLv3+-blue.svg?style=flat-square)](https://github.com/insarlab/PySolid/blob/main/LICENSE)
+[![Citation](https://img.shields.io/badge/DOI-10.1109%2FTGRS.2022.3168509-blue?style=flat-square)](https://doi.org/10.1109/TGRS.2022.3168509)
 
 ## PySolid
 
