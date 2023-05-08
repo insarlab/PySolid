@@ -18,7 +18,7 @@ setup(
     long_description=readme(),
     long_description_content_type="text/markdown",
     author="Zhang Yunjun, Dennis Milbert",
-    author_email="yunjunzgeo@gmail.com",
+    author_email="yunjunz@outlook.com",
     license="GPL-3.0-or-later",
     license_files=("LICENSE",),
 

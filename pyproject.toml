@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "pysolid"
 description = "A Python wrapper for solid to compute solid Earth tides"
 authors = [
-    {name="Zhang Yunjun", email="yunjunzgeo@gmail.com"},
+    {name="Zhang Yunjun", email="yunjunz@outlook.com"},
     {name="Dennis Milbert"},
 ]
 readme = "README.md"

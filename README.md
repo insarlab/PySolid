@@ -3,7 +3,7 @@
 [![Conda Download](https://img.shields.io/conda/dn/conda-forge/pysolid?color=green&label=conda%20downloads&style=flat-square)](https://anaconda.org/conda-forge/pysolid)
 [![Version](https://img.shields.io/github/v/release/insarlab/PySolid?color=yellow&label=version&style=flat-square)](https://github.com/insarlab/PySolid/releases)
 [![License](https://img.shields.io/badge/license-GPLv3+-blue.svg?style=flat-square)](https://github.com/insarlab/PySolid/blob/main/LICENSE)
-[![Citation](https://img.shields.io/badge/DOI-10.1109%2FTGRS.2022.3168509-blue?style=flat-square)](https://doi.org/10.1109/TGRS.2022.3168509)
+[![Citation](https://img.shields.io/badge/doi-10.1109%2FTGRS.2022.3168509-blue?style=flat-square)](https://doi.org/10.1109/TGRS.2022.3168509)
 
 ## PySolid
 
@@ -112,8 +112,8 @@ pysolid.plot_power_spectral_density4tides(tide_u, sample_spacing=step_sec)
 ```
 
 <p align="left">
-  <img width="600" src="https://yunjunzhang.files.wordpress.com/2021/01/set_ts_up-1.png">
-  <img width="600" src="https://yunjunzhang.files.wordpress.com/2021/01/set_psd-1.png">
+  <img width="600" src="./docs/images/set_point_ts.png">
+  <img width="600" src="./docs/images/set_point_psd.png">
 </p>
 
 #### 2.2 Grid Mode [[notebook](./docs/plot_grid_SET.ipynb)]
@@ -152,10 +152,10 @@ tide_los = (  tide_e * np.sin(inc_angle) * np.sin(az_angle) * -1
 ```
 
 <p align="left">
-  <img width="800" src="https://yunjunzhang.files.wordpress.com/2021/01/set_grid-3.png">
+  <img width="800" src="./docs/images/set_grid.png">
 </p>
 
 ### 3. Citing this work
 
-+   Yunjun, Z., Fattahi, H., Pi, X., Rosen, P., Simons, M., Agram, P., & Aoki, Y. (2022). Range Geolocation Accuracy of C-/L-band SAR and its Implications for Operational Stack Coregistration. _IEEE Trans. Geosci. Remote Sens., 60_, 1-19, doi:[10.1109/TGRS.2022.3168509](https://doi.org/10.1109/TGRS.2022.3168509), [arXiv](https://doi.org/10.31223/X5F641), [data](https://zenodo.org/record/6360749), [notebooks](https://github.com/yunjunz/2022-Geolocation).
++   Yunjun, Z., Fattahi, H., Pi, X., Rosen, P., Simons, M., Agram, P., & Aoki, Y. (2022). Range Geolocation Accuracy of C-/L-band SAR and its Implications for Operational Stack Coregistration. _IEEE Trans. Geosci. Remote Sens., 60_, 5227219. [ [doi](https://doi.org/10.1109/TGRS.2022.3168509) \| [arxiv](https://doi.org/10.31223/X5F641) \| [data](https://doi.org/10.5281/zenodo.6360749) \| [notebook](https://github.com/yunjunz/2022-Geolocation) ]
 +   Milbert, D. (2018), "solid: Solid Earth Tide", [Online]. Available: http://geodesyworld.github.io/SOFTS/solid.htm. Accessd on: 2020-09-06.
