@@ -13,9 +13,6 @@
 
 import os
 
-import numpy as np
-from skimage.transform import resize
-
 
 ##################################  Earth tides - grid mode  ###################################
 def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbose=True):
@@ -54,38 +51,25 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
     # location
     lat0 = float(atr['Y_FIRST'])
     lon0 = float(atr['X_FIRST'])
-    lat1 = lat0 + float(atr['Y_STEP']) * int(atr['LENGTH'])
-    lon1 = lon0 + float(atr['X_STEP']) * int(atr['WIDTH'])
+    width = int(atr['WIDTH'])
+    length = int(atr['LENGTH'])
+    lat_step = float(atr['Y_STEP'])
+    lon_step = float(atr['X_STEP'])
+    lat1 = lat0 + lat_step * length
+    lon1 = lon0 + lon_step * width
 
     vprint('PYSOLID: ----------------------------------------')
     vprint('PYSOLID: datetime: {}'.format(dt_obj.isoformat()))
     vprint('PYSOLID: SNWE: {}'.format((lat1, lat0, lon0, lon1)))
-
-    # step size
-    num_step = int(step_size / 108e3 / abs(float(atr['Y_STEP'])))
-    num_step = max(1, num_step)
-    length = np.rint(int(atr['LENGTH']) / num_step - 1e-4).astype(int)
-    width  = np.rint(int(atr['WIDTH'])  / num_step - 1e-4).astype(int)
-    lat_step = float(atr['Y_STEP']) * num_step
-    lon_step = float(atr['X_STEP']) * num_step
     vprint('SOLID  : calculate solid Earth tides in east/north/up direction')
     vprint('SOLID  : shape: {s}, step size: {la:.4f} by {lo:.4f} deg'.format(
         s=(length, width), la=lat_step, lo=lon_step))
 
-    ## calc solid Earth tides
+    # calc solid Earth tides
     tide_e, tide_n, tide_u = solid_grid(dt_obj.year, dt_obj.month, dt_obj.day,
                                         dt_obj.hour, dt_obj.minute, dt_obj.second,
-                                        lat0, lat_step, length,
-                                        lon0, lon_step, width)
-
-    # resample to the input size
-    if num_step > 1:
-        out_shape = (int(atr['LENGTH']), int(atr['WIDTH']))
-        vprint('PYSOLID: resize data to the shape of {} using order-1 spline interpolation'.format(out_shape))
-        kwargs = dict(order=1, mode='edge', anti_aliasing=True, preserve_range=True)
-        tide_e = resize(tide_e, out_shape, **kwargs)
-        tide_n = resize(tide_n, out_shape, **kwargs)
-        tide_u = resize(tide_u, out_shape, **kwargs)
+                                        lat0, float(atr['Y_STEP']), int(atr['LENGTH']),
+                                        lon0, float(atr['X_STEP']), int(atr['WIDTH']))
 
     # plot
     if display:

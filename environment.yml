@@ -8,7 +8,6 @@ dependencies:
   - numpy
   - scipy
   - matplotlib
-  - scikit-image
   # for packaging and installation
   - fortran-compiler    # Fortran compiler across platforms through conda-forge channel
   - pip
