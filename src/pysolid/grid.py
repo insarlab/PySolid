@@ -83,7 +83,6 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
         in_shape = tide_e.shape
         out_shape = (int(atr['LENGTH']), int(atr['WIDTH']))
         vprint('PYSOLID: resize data to the shape of {} using order-1 spline interpolation'.format(out_shape))
-        kwargs = dict(order=1, mode='edge', anti_aliasing=True, preserve_range=True)
         kwargs = dict(order=1, mode="nearest", grid_mode=True)
         ndi.zoom(np.stack([tide_e, tide_n, tide_u]), [1, *np.divide(out_shape, in_shape)], **kwargs)
 
