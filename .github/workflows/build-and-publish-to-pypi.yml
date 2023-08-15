@@ -49,12 +49,12 @@ jobs:
           CIBW_SKIP: pp* *-win32 *-manylinux_i686
           # Fix error for python 3.11 on macOS
           CIBW_ENVIRONMENT_MACOS: SETUPTOOLS_USE_DISTUTILS=stdlib
+          # get the binary only to avoid building numpy or other dependent wheels
+          CIBW_ENVIRONMENT: PIP_ONLY_BINARY=:all:
           # Package the DLL dependencies in the wheel for windows (done by default for the other platforms).
           # delvewheel cannot mangle the libraries, stripping does not work.
           CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel
           CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "delvewheel show {wheel} && delvewheel repair -w {dest_dir} {wheel} --no-mangle-all"
-          # get the binary only and avoid building numpy or other dependent wheels
-          PIP_ONLY_BINARY=:all:
 
       - uses: actions/upload-artifact@v3
         with:
