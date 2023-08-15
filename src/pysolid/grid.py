@@ -14,7 +14,7 @@
 import os
 
 import numpy as np
-import scipy.ndimage as ndi
+from scipy import ndimage
 
 
 ##################################  Earth tides - grid mode  ###################################
