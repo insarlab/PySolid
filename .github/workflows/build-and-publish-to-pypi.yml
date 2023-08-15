@@ -53,6 +53,8 @@ jobs:
           # delvewheel cannot mangle the libraries, stripping does not work.
           CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel
           CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "delvewheel show {wheel} && delvewheel repair -w {dest_dir} {wheel} --no-mangle-all"
+          # get the binary only and avoid building numpy or other dependent wheels
+          PIP_ONLY_BINARY=:all:
 
       - uses: actions/upload-artifact@v3
         with:
