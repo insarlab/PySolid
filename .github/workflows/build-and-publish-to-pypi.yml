@@ -50,8 +50,7 @@ jobs:
           # Fix error for python 3.11 on macOS
           CIBW_ENVIRONMENT_MACOS: SETUPTOOLS_USE_DISTUTILS=stdlib
           # get the binary only to avoid building numpy or other dependent wheels
-          CIBW_ENVIRONMENT: PIP_ONLY_BINARY=":all:"
-          CIBW_ENVIRONMENT: PIP_PRE=1
+          CIBW_ENVIRONMENT: PIP_ONLY_BINARY=":all:" PIP_PRE="1"
           # Package the DLL dependencies in the wheel for windows (done by default for the other platforms).
           # delvewheel cannot mangle the libraries, stripping does not work.
           CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel
