@@ -1,0 +1,2 @@
+# extra dependency required for testing
+matplotlib

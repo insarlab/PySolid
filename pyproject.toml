@@ -24,7 +24,6 @@ classifiers=[
 dependencies = [
     "numpy",
     "scipy",
-    "matplotlib",
 ]
 dynamic = ["version"]
 

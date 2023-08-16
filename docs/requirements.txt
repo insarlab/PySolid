@@ -1,0 +1,4 @@
+# extra dependencies required for running notebooks
+cartopy
+matplotlib
+mintpy
