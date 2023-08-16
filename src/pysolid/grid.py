@@ -14,7 +14,7 @@
 import os
 
 import numpy as np
-from skimage.transform import resize
+from scipy import ndimage
 
 
 ##################################  Earth tides - grid mode  ###################################
@@ -79,13 +79,16 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
                                         lon0, lon_step, width)
 
     # resample to the input size
+    # via scipy.ndimage.zoom or skimage.transform.resize
     if num_step > 1:
+        in_shape = tide_e.shape
         out_shape = (int(atr['LENGTH']), int(atr['WIDTH']))
         vprint('PYSOLID: resize data to the shape of {} using order-1 spline interpolation'.format(out_shape))
-        kwargs = dict(order=1, mode='edge', anti_aliasing=True, preserve_range=True)
-        tide_e = resize(tide_e, out_shape, **kwargs)
-        tide_n = resize(tide_n, out_shape, **kwargs)
-        tide_u = resize(tide_u, out_shape, **kwargs)
+
+        enu = np.stack([tide_e, tide_n, tide_u])
+        zoom_factors = [1, *np.divide(out_shape, in_shape)]
+        kwargs = dict(order=1, mode="nearest", grid_mode=True)
+        tide_e, tide_n, tide_u = ndimage.zoom(enu, zoom_factors, **kwargs)
 
     # plot
     if display:

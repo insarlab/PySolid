@@ -25,7 +25,6 @@ dependencies = [
     "numpy",
     "scipy",
     "matplotlib",
-    "scikit-image",
 ]
 dynamic = ["version"]
 

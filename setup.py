@@ -43,7 +43,6 @@ setup(
         "numpy",
         "scipy",
         "matplotlib",
-        "scikit-image",
     ],
 
     # package discovery
