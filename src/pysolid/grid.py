@@ -79,6 +79,7 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
                                         lon0, lon_step, width)
 
     # resample to the input size
+    # via scipy.ndimage.zoom or skimage.transform.resize
     if num_step > 1:
         in_shape = tide_e.shape
         out_shape = (int(atr['LENGTH']), int(atr['WIDTH']))
@@ -87,7 +88,7 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
         enu = np.stack([tide_e, tide_n, tide_u])
         zoom_factors = [1, *np.divide(out_shape, in_shape)]
         kwargs = dict(order=1, mode="nearest", grid_mode=True)
-        tide_e, tide_u, tide_n = ndimage.zoom(enu, zoom_factors, **kwargs)
+        tide_e, tide_n, tide_u = ndimage.zoom(enu, zoom_factors, **kwargs)
 
     # plot
     if display:
