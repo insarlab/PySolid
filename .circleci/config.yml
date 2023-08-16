@@ -53,7 +53,7 @@ jobs:
           command: |
             export PYTHONUNBUFFERED=1
             # install dependencies and source code
-            mamba install --verbose --yes  fortran-compiler --file ${PYSOLID_HOME}/requirements.txt
+            mamba install --verbose --yes  fortran-compiler --file ${PYSOLID_HOME}/requirements.txt --file ${PYSOLID_HOME}/tests/requirements.txt
             python -m pip install ${PYSOLID_HOME}
 
       - run:
