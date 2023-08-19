@@ -13,7 +13,7 @@ readme = "README.md"
 requires-python = ">=3.8"
 keywords = ["solid Earth tides", "deformation", "geodesy", "geophysics"]
 license = {text = "GPL-3.0-or-later"}
-classifiers=[
+classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering",
@@ -21,11 +21,11 @@ classifiers=[
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
 ]
-dependencies = [
-    "numpy",
-    "scipy",
-]
-dynamic = ["version"]
+
+# see section: setuptools_scm
+# https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html#dynamic-metadata
+# dependencies will be read from text files
+dynamic = ["version", "dependencies", "optional-dependencies"]
 
 [project.urls]
 "Homepage" = "https://github.com/insarlab/PySolid"
@@ -34,6 +34,15 @@ dynamic = ["version"]
 [tool.setuptools]
 include-package-data = true
 zip-safe = false
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+# extra requirements: `pip install pydolid[docs]` or `pip install .[docs,test]`
+[tool.setuptools.dynamic.optional-dependencies.docs]
+file = ["docs/requirements.txt"]
+[tool.setuptools.dynamic.optional-dependencies.test]
+file = ["tests/requirements.txt"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
