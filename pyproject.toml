@@ -39,6 +39,7 @@ zip-safe = false
 dependencies = { file = ["requirements.txt"] }
 
 # extra requirements: `pip install pysolid[docs]` or `pip install .[docs,test]`
+# note: the [docs] syntax requires setuptools>=64.0, thus, not working yet.
 [tool.setuptools.dynamic.optional-dependencies.docs]
 file = ["docs/requirements.txt"]
 [tool.setuptools.dynamic.optional-dependencies.test]
