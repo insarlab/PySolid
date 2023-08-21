@@ -42,14 +42,14 @@ git clone https://github.com/insarlab/PySolid.git
 
 ```bash
 # option 1: use conda to install dependencies into an existing, activated environment
-conda install -c conda-forge fortran-compiler --file PySolid/requirements.txt
+conda install -c conda-forge fortran-compiler --file PySolid/requirements.txt --file PySolid/tests/requirements.txt
 
 # option 2: use conda to install dependencies into a new environment, e.g. named "pysolid"
-conda create --name pysolid fortran-compiler --file PySolid/requirements.txt
+conda create --name pysolid fortran-compiler --file PySolid/requirements.txt --file PySolid/tests/requirements.txt
 conda activate pysolid
 
 # option 3: have a Fortran compiler already installed and use pip to install the rest dependencies
-python -m pip install -r PySolid/requirements.txt
+python -m pip install -r PySolid/requirements.txt -r PySolid/tests/requirements.txt
 ```
 
 ##### c. Install PySolid
