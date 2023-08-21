@@ -38,7 +38,7 @@ zip-safe = false
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
 
-# extra requirements: `pip install pydolid[docs]` or `pip install .[docs,test]`
+# extra requirements: `pip install pysolid[docs]` or `pip install .[docs,test]`
 [tool.setuptools.dynamic.optional-dependencies.docs]
 file = ["docs/requirements.txt"]
 [tool.setuptools.dynamic.optional-dependencies.test]
