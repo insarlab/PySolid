@@ -1,9 +1,3 @@
 # for running
 numpy
 scipy
-# for packaging and installation
-#fortran-compiler   # Fortran compiler across platforms through conda-forge channel
-pip
-setuptools
-setuptools_scm
-wheel
