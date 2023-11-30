@@ -1,8 +1,6 @@
 # for packaging and installation
 #fortran-compiler   # Fortran compiler across platforms through conda-forge channel
 pip
-setuptools
 setuptools_scm
-wheel
-# extra dependency required for testing
+# for testing
 matplotlib
