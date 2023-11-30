@@ -1,6 +1,6 @@
 # for packaging and installation
 #fortran-compiler   # Fortran compiler across platforms through conda-forge channel
 pip
-setuptools_scm
+setuptools_scm>=6.2
 # for testing
 matplotlib
