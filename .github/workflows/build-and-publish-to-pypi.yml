@@ -54,8 +54,9 @@ jobs:
           CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel
           CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "delvewheel show {wheel} && delvewheel repair -w {dest_dir} {wheel} --no-mangle-all"
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
+          name: artifact-wheels-${{ matrix.os }}
           path: ./wheelhouse/*.whl
 
   build_sdist:
@@ -69,8 +70,9 @@ jobs:
       - name: Build sdist
         run: pipx run build --sdist
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
+          name: artifact-source
           path: dist/*.tar.gz
 
   upload_pypi:
@@ -83,7 +85,7 @@ jobs:
         with:
           # unpacks default artifact into dist/
           # if `name: artifact` is omitted, the action will create extra parent dir
-          name: artifact
+          pattern: artifact-*
           path: dist
 
       - name: Publish developed version 📦 to Test PyPI
