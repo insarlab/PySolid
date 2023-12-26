@@ -13,7 +13,7 @@ This is research code provided to you "as is" with NO WARRANTIES OF CORRECTNESS.
 
 ### 1. Install
 
-PySolid is available on the [conda-forge](https://anaconda.org/conda-forge/pysolid) channel and the main archive of the [Debian](https://tracker.debian.org/pkg/pysolid) GNU/Linux OS. The released version can be install via `conda` as:
+PySolid is available on the [conda-forge](https://anaconda.org/conda-forge/pysolid) channel and the main archive of the [Debian](https://tracker.debian.org/pkg/pysolid) GNU/Linux OS. The released version can be installed via `conda` as:
 
 ```shell
 # run "conda update pysolid" to update the installed version

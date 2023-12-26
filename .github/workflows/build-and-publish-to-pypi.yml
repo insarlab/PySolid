@@ -85,16 +85,19 @@ jobs:
         with:
           # unpacks default artifact into dist/
           # if `name: artifact` is omitted, the action will create extra parent dir
-          pattern: artifact-*
           path: dist
+          pattern: artifact-*
+          merge-multiple: true
+      - name: Display structure of downloaded files
+        run: ls -R dist
 
       - name: Publish developed version 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
-          skip_existing: false
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: false
           verbose: true
 
       - name: Publish released version 📦 to PyPI
