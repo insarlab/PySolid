@@ -3,12 +3,38 @@
 
 # always prefer setuptools over distutils
 import setuptools
-from numpy.distutils.core import setup, Extension
+from setuptools import setup, Extension
+from setuptools.command.build_ext import build_ext
+from numpy import f2py
+import os
+import subprocess
+import sys
 
 # read the contents of README file
 def readme():
     with open("README.md") as f:
         return f.read()
+
+class f2py_build(build_ext):
+    def run(self):
+        for ext in self.extensions:
+            self.build_extension(ext)
+
+    def build_extension(self, ext):
+        # Reuse setuptools build_ext logic for output location and name
+        build_dir, fname = os.path.split(super().get_ext_fullpath(ext.name))
+        module = fname.split(".")[0]
+
+        # Compile a Fortran module using f2py
+        c = [sys.executable, "-m", "numpy.f2py", "-c"]
+        # Specify module name and source file paths
+        c += ["-m", module] + [os.path.abspath(x) for x in ext.sources]
+        # Use meson backend (enforces python 3.12+ behavior, not needed)
+        #c += ["--backend", "meson"]
+
+        # No way to specify the output location,
+        # so we have to run with CWD as the destination directory
+        subprocess.run(c, cwd=build_dir)
 
 setup(
     ## add the following redundant setup for setuptools<60, the latter is required for numpy.distutils
@@ -58,4 +84,6 @@ setup(
     ext_modules=[
         Extension(name="pysolid.solid", sources=["src/pysolid/solid.for"])
     ],
+
+    cmdclass=dict(build_ext=f2py_build),
 )
