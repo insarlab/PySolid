@@ -62,7 +62,7 @@ TIDES = (
     Tag('Shallow water terdiurnal'                  , r'$MK_3$'     , 8.177140247,  44.0251729, 365.555, 8 ),
     Tag('Shallow water overtides of principal solar', r'$S_4$'      , 6.0        ,  60.0      , 491.555, 9 ),
     Tag('Shallow water quarter diurnal'             , r'$MN_4$'     , 6.269173724,  57.4238337, 445.655, 10),
-    Tag('Shallow water overtides of principal solar', r'$S_6$'      , 4.0        ,  90.0      , np.NaN , 12),
+    Tag('Shallow water overtides of principal solar', r'$S_6$'      , 4.0        ,  90.0      , np.nan , 12),
     Tag('Lunar terdiurnal'                          , r'$M_3$'      , 8.280400802,  43.4761563, 355.555, 32),
     Tag('Shallow water terdiurnal'                  , '2"MK'+r'$_3$', 8.38630265 ,  42.9271398, 345.555, 34),
     Tag('Shallow water eighth diurnal'              , r'$M_8$'      , 3.105150301, 115.9364166, 855.555, 36),
