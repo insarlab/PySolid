@@ -3,7 +3,7 @@
 
 # always prefer setuptools over distutils
 import setuptools
-from numpy.distutils.core import setup, Extension
+from skbuild import setup
 
 # read the contents of README file
 def readme():
@@ -53,9 +53,4 @@ setup(
     package_data={
         "pysolid": ["solid.for"],
     },
-
-    ## fortran extensions to build with numpy.f2py
-    ext_modules=[
-        Extension(name="pysolid.solid", sources=["src/pysolid/solid.for"])
-    ],
 )
