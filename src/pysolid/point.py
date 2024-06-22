@@ -203,6 +203,7 @@ def plot_solid_earth_tides_point(dt_out, tide_e, tide_n, tide_u, lalo=None,
     if lalo:
         axs[0].set_title('solid Earth tides at (N{}, E{})'.format(lalo[0], lalo[1]), fontsize=12)
     fig.tight_layout()
+    fig.align_ylabels()
 
     # output
     if out_fig:
