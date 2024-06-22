@@ -4,9 +4,6 @@
 # always prefer setuptools over distutils
 import setuptools
 from skbuild import setup
-import os
-import subprocess
-import sys
 
 # read the contents of README file
 def readme():
