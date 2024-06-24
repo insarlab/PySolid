@@ -9,7 +9,6 @@ authors = [
     {name="Zhang Yunjun", email="yunjunz@outlook.com"},
     {name="Dennis Milbert"},
 ]
-readme = "README.md"
 requires-python = ">=3.8"
 
 keywords = ["solid Earth tides", "deformation", "geodesy", "geophysics"]
@@ -26,7 +25,7 @@ classifiers = [
 # see section: setuptools_scm
 # https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html#dynamic-metadata
 # dependencies will be read from text files
-dynamic = ["version", "dependencies", "optional-dependencies"]
+dynamic = ["version", "readme", "dependencies", "optional-dependencies"]
 
 [project.urls]
 "Homepage" = "https://github.com/insarlab/PySolid"
@@ -37,7 +36,8 @@ include-package-data = true
 zip-safe = false
 
 [tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
+dependencies = { file = ["requirements.txt"] }
+readme = { file = "README.md", content-type = "text/markdown" }
 
 # extra requirements: `pip install pysolid[docs]` or `pip install .[docs,test]`
 # note: the [docs] syntax requires setuptools>=64.0, thus, not working yet.
