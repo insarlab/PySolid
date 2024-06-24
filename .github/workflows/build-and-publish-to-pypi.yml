@@ -30,7 +30,6 @@ jobs:
         if: ${{ runner.os == 'macOS' }}
         with:
             compiler: gfortran
-        run: gfortran --version
 
       #- name: Provide gfortran (macOS)
       #  if: runner.os == 'macOS'
