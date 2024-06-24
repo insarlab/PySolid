@@ -19,11 +19,6 @@ jobs:
         # skip building wheel for windows as it's not working yet
         # macos-13 is an intel runner, macos-14 is apple silicon
         os: [ubuntu-latest, macos-latest, macos-13, macos-14]  #windows-2019
-        toolchain:
-          - {compiler: gcc, version: 13}
-        include:
-          - os: ubuntu-latest
-            toolchain: {compiler: gcc, version: 12}
 
     steps:
       - uses: actions/checkout@v4
@@ -32,10 +27,10 @@ jobs:
 
       - name: Set up Fortran
         uses: fortran-lang/setup-fortran@v1
-        id: setup-fortran
+        if: ${{ runner.os == 'macOS' }}
         with:
-            compiler: ${{ matrix.compiler }}
-            version: ${{ matrix.version }}
+            compiler: gfortran
+        run: gfortran --version
 
       #- name: Provide gfortran (macOS)
       #  if: runner.os == 'macOS'
