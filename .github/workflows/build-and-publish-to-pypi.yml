@@ -18,31 +18,37 @@ jobs:
       matrix:
         # skip building wheel for windows as it's not working yet
         # macos-13 is an intel runner, macos-14 is apple silicon
-        os: [ubuntu-latest, macos-13, macos-14]  #windows-2019
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13, macos-14]  #windows-2019
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Provide gfortran (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          # https://github.com/actions/virtual-environments/issues/2524
-          # https://github.com/cbg-ethz/dce/blob/master/.github/workflows/pkgdown.yaml
-          sudo ln -s /usr/local/bin/gfortran-11 /usr/local/bin/gfortran
-          sudo mkdir /usr/local/gfortran
-          sudo ln -s /usr/local/Cellar/gcc@11/*/lib/gcc/11 /usr/local/gfortran/lib
-          gfortran --version
+      - name: Set up Fortran
+        uses: fortran-lang/setup-fortran@main
+        with:
+            compiler: ${{ matrix.compiler }}
+            version: ${{ matrix.version }}
 
-      - name: Provide gfortran (Windows)
-        if: runner.os == 'Windows'
-        uses: msys2/setup-msys2@v2
+      #- name: Provide gfortran (macOS)
+      #  if: runner.os == 'macOS'
+      #  run: |
+      #    # https://github.com/actions/virtual-environments/issues/2524
+      #    # https://github.com/cbg-ethz/dce/blob/master/.github/workflows/pkgdown.yaml
+      #    sudo ln -s /usr/local/bin/gfortran-11 /usr/local/bin/gfortran
+      #    sudo mkdir /usr/local/gfortran
+      #    sudo ln -s /usr/local/Cellar/gcc@11/*/lib/gcc/11 /usr/local/gfortran/lib
+      #    gfortran --version
 
-      - name: Tell distutils to use mingw (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
+      #- name: Provide gfortran (Windows)
+      #  if: runner.os == 'Windows'
+      #  uses: msys2/setup-msys2@v2
+
+      #- name: Tell distutils to use mingw (Windows)
+      #  if: runner.os == 'Windows'
+      #  run: |
+      #    echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.14.1
