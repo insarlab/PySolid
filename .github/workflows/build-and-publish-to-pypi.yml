@@ -44,12 +44,12 @@ jobs:
           echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.14.1
+        uses: pypa/cibuildwheel@v2.19.1
         env:
           # Disable building for PyPy and 32bit.
           CIBW_SKIP: pp* *-win32 *-manylinux_i686
-          # Fix error for python 3.11 on macOS
-          CIBW_ENVIRONMENT_MACOS: SETUPTOOLS_USE_DISTUTILS=stdlib
+          CIBW_ENVIRONMENT_MACOS: MACOSX_DEPLOYMENT_TARGET="13.0"
+          CIBW_BEFORE_BUILD_MACOS: python -m pip install --upgrade pip
           # Package the DLL dependencies in the wheel for windows (done by default for the other platforms).
           # delvewheel cannot mangle the libraries, stripping does not work.
           CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel
