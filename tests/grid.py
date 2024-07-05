@@ -64,6 +64,7 @@ if __name__ == '__main__':
     assert np.allclose(tide_e[::80, ::100], tide_e_80_100)
     assert np.allclose(tide_n[::80, ::100], tide_n_80_100)
     assert np.allclose(tide_u[::80, ::100], tide_u_80_100)
+    print('Pass.')
 
     # plot
     out_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'pic'))
