@@ -3,8 +3,8 @@
 *** Author: Dennis Milbert, 2018-06-01. The code is available at:
 ***     http://geodesyworld.github.io/SOFTS/solid.htm and can be downloaded as:
 ***     wget http://geodesyworld.github.io/SOFTS/solid.for.txt -O solid.for
-*** The code is based on dehanttideinel.f provided by V. Dehant, S. Mathews, 
-***     J. Gipson and C. Bruyninx. The latest version of dehanttideinel.f and its 
+*** The code is based on dehanttideinel.f provided by V. Dehant, S. Mathews,
+***     J. Gipson and C. Bruyninx. The latest version of dehanttideinel.f and its
 ***     dependent subroutines can be download from IERS conventions website as:
 ***     wget -r -l1 --no-parent -R "index.html*" -nH --cut-dirs=3 https://iers-conventions.obspm.fr/content/chapter7/software/dehanttideinel
 *** Sep 2020: modify solid() to solid_point/grid() as subroutines, Z. Yunjun and S. Sangha.
@@ -12,7 +12,7 @@
 
       subroutine solid_grid(iyr,imo,idy,ihh,imm,iss,
      * glad0,steplat,nlat,glod0,steplon,nlon,tide_e,tide_n,tide_u)
- 
+
 *** calculate solid earth tides (SET) for one spatial grid given the date/time
 *** Arguments: iyr/imo/idy/ihh/imm/iss - int, date/time for YYYY/MM/DD/HH/MM/SS
 ***            glad0/glad1/steplat     - float, north(Y_FIRST)/south/step(negative) in deg
@@ -488,9 +488,9 @@
 * The code below is commented to prevent restoring deformation
 * due to permanent tide.  All the code above removes
 * total tidal deformation with conventional Love numbers.
-* The code above realizes a conventional tide free crust (i.e. ITRF). 
+* The code above realizes a conventional tide free crust (i.e. ITRF).
 * This does NOT conform to Resolution 16 of the 18th General Assembly
-* of the IAG (1983).  This resolution has not been implemented by 
+* of the IAG (1983).  This resolution has not been implemented by
 * the space geodesy community in general (c.f. IERS Conventions 2003).
 *-----------------------------------------------------------------------
 
@@ -1235,16 +1235,16 @@
 
       implicit double precision(a-h,o-z)
       double precision u,v,w,ra,az,va
-      
+
       s2=u*u+v*v
       r2=s2+w*w
-      
+
       s =dsqrt(s2)
       ra=dsqrt(r2)
-      
+
       az=datan2(v,u)
       va=datan2(w,s)
-      
+
       return
       end
 *-----------------------------------------------------------------------
@@ -1290,38 +1290,38 @@
       end
 *-----------------------------------------------------------------------
       subroutine rot1(theta,x,y,z,u,v,w)
-      
+
 *** rotate coordinate axes about 1 axis by angle of theta radians
 *** x,y,z transformed into u,v,w
 
       implicit double precision(a-h,o-z)
       double precision theta,x,y,z,u,v,w
-      
+
       s=dsin(theta)
       c=dcos(theta)
-            
+
       u=x
       v=c*y+s*z
       w=c*z-s*y
-            
+
       return
       end
 *-----------------------------------------------------------------------
       subroutine rot3(theta,x,y,z,u,v,w)
-      
+
 *** rotate coordinate axes about 3 axis by angle of theta radians
 *** x,y,z transformed into u,v,w
 
       implicit double precision(a-h,o-z)
       double precision theta,x,y,z,u,v,w
-      
+
       s=dsin(theta)
       c=dcos(theta)
-            
+
       u=c*x+s*y
       v=c*y-s*x
       w=z
-            
+
       return
       end
 ************************************************************************
@@ -1559,9 +1559,9 @@
 
       implicit double precision(a-h,o-z)
       double precision tsec
-      !*** upper limit, leap second table, 2024jun28
+      !*** upper limit, leap second table, 2025jun28
       !*** lower limit, leap second table, 1972jan01
-      parameter(MJDUPPER=60489)
+      parameter(MJDUPPER=60854)
       parameter(MJDLOWER=41317)
 
       !*** leap second table limit flag
@@ -1642,7 +1642,7 @@
 ***** other leap second references at:
 ***** http://hpiers.obspm.fr/eoppc/bul/bulc/Leap_Second_History.dat
 ***** http://hpiers.obspm.fr/eoppc/bul/bulc/bulletinc.dat
-***** File expires on 28 June 2024
+***** File expires on 28 June 2025
 
 *** test against newest leaps first
 
