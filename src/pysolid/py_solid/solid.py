@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+##################################################################
+# A Python-only implementation of original solid.for .
+# Author: Piyush Agram, Nov 2024
+##################################################################
+
 from __future__ import annotations
 from dataclasses import dataclass
 import datetime
