@@ -62,3 +62,5 @@ jobs:
             # run tests
             python ${PYSOLID_HOME}/tests/point.py
             python ${PYSOLID_HOME}/tests/grid.py
+            python ${PYSOLID_HOME}/tests/point_pyimpl.py
+            python ${PYSOLID_HOME}/tests/grid_pyimpl.py
