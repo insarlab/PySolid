@@ -1559,9 +1559,9 @@
 
       implicit double precision(a-h,o-z)
       double precision tsec
-      !*** upper limit, leap second table, 2025jun28
+      !*** upper limit, leap second table, 2025dec28
       !*** lower limit, leap second table, 1972jan01
-      parameter(MJDUPPER=60854)
+      parameter(MJDUPPER=61037)
       parameter(MJDLOWER=41317)
 
       !*** leap second table limit flag
@@ -1610,7 +1610,7 @@
         return
       endif
 
-***** http://maia.usno.navy.mil/ser7/tai-utc.dat
+***** https://maia.usno.navy.mil/ser7/tai-utc.dat
 *** 1972 JAN  1 =JD 2441317.5  TAI-UTC=  10.0s
 *** 1972 JUL  1 =JD 2441499.5  TAI-UTC=  11.0s
 *** 1973 JAN  1 =JD 2441683.5  TAI-UTC=  12.0s
@@ -1642,7 +1642,7 @@
 ***** other leap second references at:
 ***** http://hpiers.obspm.fr/eoppc/bul/bulc/Leap_Second_History.dat
 ***** http://hpiers.obspm.fr/eoppc/bul/bulc/bulletinc.dat
-***** File expires on 28 June 2025
+***** File expires on 28 December 2025
 
 *** test against newest leaps first
 
