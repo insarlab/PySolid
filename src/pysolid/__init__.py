@@ -11,16 +11,17 @@ except PackageNotFoundError:
 
 
 # top-level functions
-from pysolid.grid import (
+from .grid import (
     calc_solid_earth_tides_grid,
     plot_solid_earth_tides_grid,
 )
-from pysolid.point import (
+from .point import (
     TIDES,
     calc_solid_earth_tides_point,
     plot_solid_earth_tides_point,
     plot_power_spectral_density4tides,
 )
+from . import py_solid
 
 __all__ = [
     '__version__',
@@ -30,4 +31,5 @@ __all__ = [
     'calc_solid_earth_tides_point',
     'plot_solid_earth_tides_point',
     'plot_power_spectral_density4tides',
+    'py_solid',
 ]
