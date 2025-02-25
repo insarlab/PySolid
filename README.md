@@ -48,7 +48,7 @@ conda install -c conda-forge fortran-compiler --file PySolid/requirements.txt --
 conda create --name pysolid fortran-compiler --file PySolid/requirements.txt --file PySolid/tests/requirements.txt
 conda activate pysolid
 
-# option 3: have a Fortran compiler already installed and use pip to install the rest dependencies
+# option 3: have a Fortran compiler already installed and use pip to install the dependencies
 python -m pip install -r PySolid/requirements.txt -r PySolid/tests/requirements.txt
 ```
 
@@ -56,15 +56,16 @@ python -m pip install -r PySolid/requirements.txt -r PySolid/tests/requirements.
 
 ```bash
 # option 1: use pip to install pysolid into the current environment
-python -m pip install PySolid
+python -m pip install ./PySolid
 
 # option 2: use pip to install pysolid in develop mode (editable) into the current environment
-python -m pip install -e PySolid
+python -m pip install -e ./PySolid
 
 # option 3: manually compile the Fortran code and setup environment variable
 cd PySolid/src/pysolid
 f2py -c -m solid solid.for
-export PYTHONPATH=${PYTHONPATH}:~/tools/PySolid
+# Replace <path-to-folder> with proper path to PySolid main folder
+export PYTHONPATH=${PYTHONPATH}:<path-to-folder>/PySolid/src
 ```
 
 ##### d. Test the installation
