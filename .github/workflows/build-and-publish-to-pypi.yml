@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         # skip building wheel for windows as it's not working yet
-        os: [ubuntu-latest, macos-15]  #windows-2019
+        os: [ubuntu-latest, macos-latest]  #windows-2019
 
     steps:
       - uses: actions/checkout@v4
@@ -28,7 +28,8 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install gcc
-          ln -sf $(brew --prefix)/bin/gfortran-15 /usr/local/bin/gfortran
+          fc_files=( $(brew --prefix)/bin/gfortran-* )
+          sudo ln -sf "${fc_files[@]: -1}" /usr/local/bin/gfortran
           gfortran --version
 
       - name: Symlink gfortran (Windows)
@@ -45,7 +46,7 @@ jobs:
         env:
           # Disable building for PyPy and 32bit.
           CIBW_SKIP: pp* *-win32 *-manylinux_i686
-          CIBW_ENVIRONMENT_MACOS: MACOSX_DEPLOYMENT_TARGET="15.0"
+          CIBW_ENVIRONMENT_MACOS: MACOSX_DEPLOYMENT_TARGET="14.0"
           CIBW_BEFORE_BUILD_MACOS: python -m pip install --upgrade pip
           # Package the DLL dependencies in the wheel for windows (done by default for the other platforms).
           # delvewheel cannot mangle the libraries, stripping does not work.
