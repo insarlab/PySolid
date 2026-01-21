@@ -154,7 +154,7 @@
 
 *** end of processing and flag for leap second
 
-      if(lflag) then
+      if(.false.) then
         print *, 'Mild Warning -- time crossed leap second table'
         print *, '  boundaries.  Boundary edge value used instead'
       endif
@@ -293,7 +293,7 @@
 
 *** end of processing and flag of leap second
 
-      if(lflag) then
+      if(.false.) then
         print *, 'Mild Warning -- time crossed leap second table'
         print *, '  boundaries.  Boundary edge value used instead'
       endif
