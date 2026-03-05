@@ -78,7 +78,7 @@ def calc_solid_earth_tides_point(lat, lon, dt0, dt1, step_sec=60, display=False,
 
     Parameters:
         lat/lon : float
-            latitude/longitude of the point of interest, in degrees
+            latitude/longitude of the point of interest, in degrees.
         dt0/1 : datetime.datetime
             start/end datetimes
         step_sec : int, optional
@@ -166,9 +166,9 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
 
     Parameters: 
         lat/lon : float
-            Latitude/longitude of the point of interest
+            Latitude/longitude of the point of interest, in degrees.
         date_str : str
-            Date in YYYYMMDD format.
+            The date to generate solid earth tides for, in YYYYMMDD format.
         step_sec : int, optional
             Time step, in seconds, of the output. Deaults to 60.
     Returns: 
@@ -180,7 +180,7 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
             SET in north direction, in meters.
         tide_u : 1D np.ndarray of float32
             SET in up direction, in meters.
-    Examples: 
+    Examples:
         (
             dt_out, tide_e, tide_n, tide_u
         ) = calc_solid_earth_tides_point_per_day(34.0, -118.0, '20180219')
