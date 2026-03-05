@@ -35,7 +35,7 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
                 X/Y_FIRST
                 X/Y_STEP
         step_size : float
-            grid step size; fed into the fortran code in meters to speedup the
+            grid step size in meters; fed into the fortran code to speed up the
             calculation.
         display : bool, optional
             If True, plot the calculated SET. Defaults to False.
@@ -50,7 +50,7 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
             SET in up direction in meters
     Examples: 
         atr = readfile.read_attribute('geo_velocity.h5')
-        
+
         tide_e, tide_n, tide_u = calc_solid_earth_tides_grid('20180219', atr)
     """
     try:
