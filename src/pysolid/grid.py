@@ -34,9 +34,9 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
                 LENGTH/WIDTH
                 X/Y_FIRST
                 X/Y_STEP
-        step_size : float
+        step_size : float, optional
             grid step size in meters; fed into the fortran code to speed up the
-            calculation.
+            calculation. Defaults to 1e3.
         display : bool, optional
             If True, plot the calculated SET. Defaults to False.
         verbose : bool, optional

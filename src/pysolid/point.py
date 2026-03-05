@@ -178,7 +178,7 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
         date_str : str
             The date to generate solid earth tides for, in YYYYMMDD format.
         step_sec : int, optional
-            Time step, in seconds, of the output. Deaults to 60.
+            Time step, in seconds, of the output. Defaults to 60.
     Returns: 
         dt_out : 1D np.ndarray of datetime.datetime
             The datetimes associated with each index of the following three arrays.
