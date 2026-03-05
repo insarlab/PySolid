@@ -40,7 +40,7 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
         display : bool, optional
             If True, plot the calculated SET. Defaults to False.
         verbose : bool, optional
-            If True, print verbose messages. Defaults to False.
+            If True, print verbose messages. Defaults to True.
     Returns: 
         tide_e : 2D np.ndarray of floats
             SET in east direction in meters

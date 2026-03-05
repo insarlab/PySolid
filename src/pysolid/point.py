@@ -73,24 +73,30 @@ TIDES = (
 ##################################  Earth tides - point mode  ##################################
 def calc_solid_earth_tides_point(lat, lon, dt0, dt1, step_sec=60, display=False, verbose=True):
     """
-    Calculate SET in east/north/up direction for the given time period at the given
-    point (lat/lon).
+    Calculate solid earth tides (SET) in east/north/up direction for the given time
+    period at the given point.
 
     Parameters:
-        lat/lon : float
-            latitude/longitude of the point of interest, in degrees.
-        dt0/1 : datetime.datetime
-            start/end datetimes
+        lat : float
+            Latitude of the point of interest, in degrees.
+        lon : float
+            Longitude of the point of interest, in degrees.
+        dt0 : datetime.datetime
+            The datetime of the beginning of the SET calculation.
+        dt1 : datetime.datetime
+            The datetime of the end of the SET calculation.
         step_sec : int, optional
             Time step, in seconds, of the output. Defaults to 60.
         display : bool, optional
             If True, plot the calculated SET. Defaults to False.
         verbose : bool, optional
-            If True, print verbose messages. Defaults to False.
+            If True, print verbose messages. Defaults to True.
     Returns: 
         dt_out : 1D np.ndarray of datetime.datetime
             The datetimes associated with each index of the following three arrays.
             The span of this array will be at least the period between dt0 and dt1.
+            Note that dt_out is clamped to step_sec, so the start and end times may
+            be slightly different than dt0 and dt1.
         tide_e : 1D np.ndarray of float32
             SET in east direction, in meters.
         tide_n : 1D np.ndarray of float32
@@ -164,9 +170,11 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
     Calculate solid Earth tides (SET) in east/north/up direction for one day at the
     given point (lat/lon).
 
-    Parameters: 
-        lat/lon : float
-            Latitude/longitude of the point of interest, in degrees.
+    Parameters:
+        lat : float
+            Latitude of the point of interest, in degrees.
+        lon : float
+            Longitude of the point of interest, in degrees.
         date_str : str
             The date to generate solid earth tides for, in YYYYMMDD format.
         step_sec : int, optional
