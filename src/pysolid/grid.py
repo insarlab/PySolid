@@ -51,7 +51,9 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
     Examples: 
         atr = readfile.read_attribute('geo_velocity.h5')
 
-        tide_e, tide_n, tide_u = calc_solid_earth_tides_grid('20180219', atr)
+        dt_obj = datetime.datetime(year=2018, month=2, day=19)
+
+        tide_e, tide_n, tide_u = calc_solid_earth_tides_grid(dt_obj, atr)
     """
     try:
         from pysolid.solid import solid_grid

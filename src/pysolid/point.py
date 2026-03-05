@@ -82,7 +82,7 @@ def calc_solid_earth_tides_point(lat, lon, dt0, dt1, step_sec=60, display=False,
         dt0/1 : datetime.datetime
             start/end datetimes
         step_sec : int, optional
-            Time step, in seconds, of the output. Deaults to 60.
+            Time step, in seconds, of the output. Defaults to 60.
         display : bool, optional
             If True, plot the calculated SET. Defaults to False.
         verbose : bool, optional
@@ -101,7 +101,7 @@ def calc_solid_earth_tides_point(lat, lon, dt0, dt1, step_sec=60, display=False,
         dt0 = dt.datetime(2020,11,1,4,0,0)
 
         dt1 = dt.datetime(2020,12,31,2,0,0)
-        
+
         (
             dt_out, tide_e, tide_n, tide_u
         ) = calc_solid_earth_tides_point(34.0, -118.0, dt0, dt1)
