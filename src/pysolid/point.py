@@ -91,7 +91,8 @@ def calc_solid_earth_tides_point(lat, lon, dt0, dt1, step_sec=60, display=False,
             If True, plot the calculated SET. Defaults to False.
         verbose : bool, optional
             If True, print verbose messages. Defaults to True.
-    Returns: 
+
+    Returns:
         dt_out : 1D np.ndarray of datetime.datetime
             The datetimes associated with each index of the following three arrays.
             The span of this array will be at least the period between dt0 and dt1.
@@ -103,7 +104,8 @@ def calc_solid_earth_tides_point(lat, lon, dt0, dt1, step_sec=60, display=False,
             SET in north direction, in meters.
         tide_u : 1D np.ndarray of float32
             SET in up direction, in meters.
-    Example: 
+
+    Example:
         dt0 = dt.datetime(2020,11,1,4,0,0)
 
         dt1 = dt.datetime(2020,12,31,2,0,0)
@@ -179,7 +181,8 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
             The date to generate solid earth tides for, in YYYYMMDD format.
         step_sec : int, optional
             Time step, in seconds, of the output. Defaults to 60.
-    Returns: 
+
+    Returns:
         dt_out : 1D np.ndarray of datetime.datetime
             The datetimes associated with each index of the following three arrays.
         tide_e : 1D np.ndarray of float32
@@ -188,7 +191,8 @@ def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
             SET in north direction, in meters.
         tide_u : 1D np.ndarray of float32
             SET in up direction, in meters.
-    Examples:
+
+    Example:
         (
             dt_out, tide_e, tide_n, tide_u
         ) = calc_solid_earth_tides_point_per_day(34.0, -118.0, '20180219')

@@ -41,14 +41,16 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
             If True, plot the calculated SET. Defaults to False.
         verbose : bool, optional
             If True, print verbose messages. Defaults to True.
-    Returns: 
+
+    Returns:
         tide_e : 2D np.ndarray of floats
             SET in east direction in meters
         tide_n : 2D np.ndarray
             SET in north direction in meters
         tide_u : 2D np.ndarray
             SET in up direction in meters
-    Examples: 
+
+    Example:
         atr = readfile.read_attribute('geo_velocity.h5')
 
         dt_obj = datetime.datetime(year=2018, month=2, day=19)
