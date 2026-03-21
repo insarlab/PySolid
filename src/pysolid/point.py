@@ -72,23 +72,47 @@ TIDES = (
 
 ##################################  Earth tides - point mode  ##################################
 def calc_solid_earth_tides_point(lat, lon, dt0, dt1, step_sec=60, display=False, verbose=True):
-    """Calculate SET in east/north/up direction for the given time period at the given point (lat/lon).
+    """
+    Calculate solid earth tides (SET) in east/north/up direction for the given time
+    period at the given point.
 
-    Parameters: lat/lon  - float32, latitude/longitude of the point of interest
-                dt0/1    - datetime.datetime object, start/end date and time
-                step_sec - int16, time step in seconds
-                display  - bool, plot the calculated SET
-                verbose  - bool, print verbose message
-    Returns:    dt_out   - 1D np.ndarray in dt.datetime objects
-                tide_e   - 1D np.ndarray in float32, SET in east  direction in meters
-                tide_n   - 1D np.ndarray in float32, SET in north direction in meters
-                tide_u   - 1D np.ndarray in float32, SET in up    direction in meters
-    Examples:   dt0 = dt.datetime(2020,11,1,4,0,0)
-                dt1 = dt.datetime(2020,12,31,2,0,0)
-                (dt_out,
-                 tide_e,
-                 tide_n,
-                 tide_u) = calc_solid_earth_tides_point(34.0, -118.0, dt0, dt1)
+    Parameters:
+        lat : float
+            Latitude of the point of interest, in degrees.
+        lon : float
+            Longitude of the point of interest, in degrees.
+        dt0 : datetime.datetime
+            The datetime of the beginning of the SET calculation.
+        dt1 : datetime.datetime
+            The datetime of the end of the SET calculation.
+        step_sec : int, optional
+            Time step, in seconds, of the output. Defaults to 60.
+        display : bool, optional
+            If True, plot the calculated SET. Defaults to False.
+        verbose : bool, optional
+            If True, print verbose messages. Defaults to True.
+
+    Returns:
+        dt_out : 1D np.ndarray of datetime.datetime
+            The datetimes associated with each index of the following three arrays.
+            The span of this array will be at least the period between dt0 and dt1.
+            Note that dt_out is clamped to step_sec, so the start and end times may
+            be slightly different than dt0 and dt1.
+        tide_e : 1D np.ndarray of float32
+            SET in east direction, in meters.
+        tide_n : 1D np.ndarray of float32
+            SET in north direction, in meters.
+        tide_u : 1D np.ndarray of float32
+            SET in up direction, in meters.
+
+    Example:
+        dt0 = dt.datetime(2020,11,1,4,0,0)
+
+        dt1 = dt.datetime(2020,12,31,2,0,0)
+
+        (
+            dt_out, tide_e, tide_n, tide_u
+        ) = calc_solid_earth_tides_point(34.0, -118.0, dt0, dt1)
     """
 
     print('PYSOLID: calculate solid Earth tides in east/north/up direction')
@@ -144,20 +168,34 @@ def calc_solid_earth_tides_point(lat, lon, dt0, dt1, step_sec=60, display=False,
 
 
 def calc_solid_earth_tides_point_per_day(lat, lon, date_str, step_sec=60):
-    """Calculate solid Earth tides (SET) in east/north/up direction
-    for one day at the given point (lat/lon).
+    """
+    Calculate solid Earth tides (SET) in east/north/up direction for one day at the
+    given point (lat/lon).
 
-    Parameters: lat/lon  - float32, latitude/longitude of the point of interest
-                date_str - str, date in YYYYMMDD
-                step_sec - int16, time step in seconds
-    Returns:    dt_out   - 1D np.ndarray in dt.datetime objects
-                tide_e   - 1D np.ndarray in float32, SET in east  direction in meters
-                tide_n   - 1D np.ndarray in float32, SET in north direction in meters
-                tide_u   - 1D np.ndarray in float32, SET in up    direction in meters
-    Examples:   (dt_out,
-                 tide_e,
-                 tide_n,
-                 tide_u) = calc_solid_earth_tides_point_per_day(34.0, -118.0, '20180219')
+    Parameters:
+        lat : float
+            Latitude of the point of interest, in degrees.
+        lon : float
+            Longitude of the point of interest, in degrees.
+        date_str : str
+            The date to generate solid earth tides for, in YYYYMMDD format.
+        step_sec : int, optional
+            Time step, in seconds, of the output. Defaults to 60.
+
+    Returns:
+        dt_out : 1D np.ndarray of datetime.datetime
+            The datetimes associated with each index of the following three arrays.
+        tide_e : 1D np.ndarray of float32
+            SET in east direction, in meters.
+        tide_n : 1D np.ndarray of float32
+            SET in north direction, in meters.
+        tide_u : 1D np.ndarray of float32
+            SET in up direction, in meters.
+
+    Example:
+        (
+            dt_out, tide_e, tide_n, tide_u
+        ) = calc_solid_earth_tides_point_per_day(34.0, -118.0, '20180219')
     """
     try:
         from pysolid.solid import solid_point

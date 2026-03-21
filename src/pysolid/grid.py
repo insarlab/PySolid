@@ -26,20 +26,36 @@ def calc_solid_earth_tides_grid(dt_obj, atr, step_size=1e3, display=False, verbo
     input size. This uses the fact that SET varies slowly in space. Comparison w and w/o step_size
     shows a difference in tide_u with max of 5e-8 m, thus negligible.
 
-    Parameters: dt_obj    - datetime.datetime object (with precision up to the second)
-                atr       - dict, metadata including the following keys:
-                                LENGTH/WIDTTH
-                                X/Y_FIRST
-                                X/Y_STEP
-                step_size - float, grid step feeded into the fortran code in meters
-                                to speedup the calculation
-                display   - bool, plot the calculated SET
-                verbose   - bool, print verbose message
-    Returns:    tide_e    - 2D np.ndarray, SET in east  direction in meters
-                tide_n    - 2D np.ndarray, SET in north direction in meters
-                tide_u    - 2D np.ndarray, SET in up    direction in meters
-    Examples:   atr = readfile.read_attribute('geo_velocity.h5')
-                tide_e, tide_n, tide_u = calc_solid_earth_tides_grid('20180219', atr)
+    Parameters:
+        dt_obj : datetime.datetime
+            The datetime to calculate this grid for, with precision up to the second.
+        atr : dict
+            metadata including the following keys:
+                LENGTH/WIDTH
+                X/Y_FIRST
+                X/Y_STEP
+        step_size : float, optional
+            grid step size in meters; fed into the fortran code to speed up the
+            calculation. Defaults to 1e3.
+        display : bool, optional
+            If True, plot the calculated SET. Defaults to False.
+        verbose : bool, optional
+            If True, print verbose messages. Defaults to True.
+
+    Returns:
+        tide_e : 2D np.ndarray of floats
+            SET in east direction in meters
+        tide_n : 2D np.ndarray
+            SET in north direction in meters
+        tide_u : 2D np.ndarray
+            SET in up direction in meters
+
+    Example:
+        atr = readfile.read_attribute('geo_velocity.h5')
+
+        dt_obj = datetime.datetime(year=2018, month=2, day=19)
+
+        tide_e, tide_n, tide_u = calc_solid_earth_tides_grid(dt_obj, atr)
     """
     try:
         from pysolid.solid import solid_grid
